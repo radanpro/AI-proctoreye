@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Images - AI Proctoring</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <h1 class="text-3xl font-bold text-center mb-6">Compare Images</h1>
+    <form id="compareForm" class="max-w-md mx-auto bg-white p-6 rounded shadow-md">
+        <label for="studentId" class="block text-lg font-medium mb-2">Enter Student ID:</label>
+        <input type="text" id="studentId" name="studentId" required class="block w-full p-2 mb-4 border rounded">
+        
+        <label for="cameraImage" class="block text-lg font-medium mb-2">Capture Image from Camera:</label>
+        <input type="file" id="cameraImage" accept="image/*" required class="block w-full p-2 mb-4 border rounded">
+
+        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded w-full">Compare</button>
+    </form>
+
+    <div class="text-center mt-4">
+        <a href="index.html" class="text-blue-500">Back to Home</a>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

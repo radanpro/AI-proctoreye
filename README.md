@@ -1,4 +1,7 @@
+
 # AI ProctorEye
+
+**⚠️ This project is currently under active development. Expect frequent updates and changes.**
 
 AI ProctorEye is an intelligent system designed to verify student identities, monitor their behavior during exams, and ensure a secure and fair examination environment. The project leverages AI techniques such as face recognition, barcode scanning, and behavior analysis to detect suspicious activity and prevent cheating.
 
@@ -43,33 +46,54 @@ AI-proctoreye/
 
 ## Installation
 
-1. Clone the repository:
+1. **Clone the Repository**:
 
-```bash
-git clone https://github.com/abdulrahmanRadan/AI-proctoreye.git
-```
+   ```bash
+   git clone https://github.com/abdulrahmanRadan/AI-proctoreye.git
+   ```
 
-2. Navigate to the project directory:
+2. **Navigate to the Project Directory**:
 
-```bash
-cd AI-proctoreye
-```
+   ```bash
+   cd AI-proctoreye
+   ```
 
-3. Install Python dependencies:
+3. **Create a Virtual Environment**:
 
-```bash
-pip install -r api/requirements.txt
-```
+   ```bash
+   python -m venv venv
+   ```
+
+4. **Activate the Virtual Environment**:
+   - On **Windows**:
+
+     ```bash
+     venv\Scripts\activate
+     ```
+
+   - On **macOS/Linux**:
+
+     ```bash
+     source venv/bin/activate
+     ```
+
+5. **Install Dependencies**:
+
+   After activating the virtual environment, install the required dependencies from the `requirements.txt` file:
+
+   ```bash
+   pip install -r api/requirements.txt
+   ```
 
 ## Usage
 
-1. Run the API server:
+1. **Run the API Server**:
 
-```bash
-python api/api_server.py
-```
+   ```bash
+   python api/api_server.py
+   ```
 
-2. Access the mock frontend to test the system's features during development.
+2. **Access the Mock Frontend** to test the system's features during development.
 
 ## Development Steps
 
@@ -83,6 +107,29 @@ python api/api_server.py
 - Implement live video analysis for real-time behavior monitoring.
 - Add scalability to handle larger datasets and more students efficiently.
 - Integrate with external exam management systems for seamless operation.
+
+## Contributing
+
+We welcome contributions to enhance the project! Please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes.
+4. Commit your changes (`git commit -m "Add new feature"`).
+5. Push to the branch (`git push origin feature-branch`).
+6. Create a new Pull Request.
+
+## .gitignore
+
+To maintain a clean and organized repository, the following items are included in the `.gitignore` file:
+
+- Python bytecode and cache files
+- Virtual environment directories
+- Environment variable files
+- Logs and debugging files
+- SQLite databases (if used)
+- Mock databases used for testing
+- Node.js dependencies (if frontend uses Node.js)
 
 ## License
 

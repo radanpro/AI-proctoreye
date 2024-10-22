@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - AI Proctoring</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <h1 class="text-4xl font-bold text-center mb-6">نظام مراقبة الذكاء الاصطناعي</h1>
+    <nav class="flex justify-center space-x-4 mb-8">
+        <a href="/new_student" class="bg-blue-500 text-white px-4 py-2 rounded">إضافة طالب جديد</a>
+        <a href="/students" class="bg-green-500 text-white px-4 py-2 rounded">عرض الطلاب</a>
+    </nav>
+
+    <!-- Display Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="text-center">
+                {% for category, message in messages %}
+                    <div class="p-4 mb-4 text-white bg-{{ 'green-500' if category == 'success' else 'red-500' }} rounded">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>
