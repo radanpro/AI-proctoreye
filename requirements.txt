@@ -1,0 +1,6 @@
+Flask==3.0.3
+mysql_connector_repackaged==0.3.1
+numpy==2.1.2
+opencv_contrib_python==4.10.0.84
+opencv_python==4.10.0.84
+Pillow==11.0.0
