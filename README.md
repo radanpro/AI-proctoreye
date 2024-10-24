@@ -83,7 +83,7 @@ AI-proctoreye/
 1. **Run the API Server**:
 
    ```bash
-   python api/api_server.py
+   python api/main.py
    ```
 
 2. **Access the Mock Frontend** to test the system's features during development.
