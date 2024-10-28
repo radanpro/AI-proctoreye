@@ -28,8 +28,11 @@ The project is divided into two main parts:
 ```bash
 AI-proctoreye/
 │
-├── api/                    # Core system and API
-│   ├──
+├── api/  # Core system and API
+|   ├── databse/
+|   ├── interface/  
+|   ├── services/              
+│   ├── main.py
 │   └── requirements.txt    
 │
 ├── frontend/ 
@@ -78,6 +81,10 @@ AI-proctoreye/
    pip install -r api/requirements.txt
    ```
 
+6. **Set Up MySQL Database**:
+   - Ensure you have **XAMPP** or another MySQL server running. 
+   - Create a new database for your project and configure the connection settings in your code in `database/database_manager.py` .
+
 ## Usage
 
 1. **Run the API Server**:
@@ -86,7 +93,7 @@ AI-proctoreye/
    python api/main.py
    ```
 
-2. **Access the Mock Frontend** to test the system's features during development.
+2. 
 
 ## Development Steps
 
@@ -106,11 +113,30 @@ AI-proctoreye/
 We welcome contributions to enhance the project! Please follow these steps:
 
 1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
+2. Create a new branch for your feature or bug fix:
+
+   ```bash
+   git checkout -b feature-branch
+   ```
+
 3. Make your changes.
-4. Commit your changes (`git commit -m "Add new feature"`).
-5. Push to the branch (`git push origin feature-branch`).
-6. Create a new Pull Request.
+4. Commit your changes with a descriptive message:
+
+   ```bash
+   git commit -m "Add new feature"
+   ```
+
+5. Push to the branch you created:
+
+   ```bash
+   git push origin feature-branch
+   ```
+
+6. Create a new Pull Request:
+   - Go to your forked repository on GitHub.
+   - Click on the "Pull Requests" tab.
+   - Click on the "New Pull Request" button.
+   - Select your branch from the dropdown and create the pull request, adding any relevant comments.
 
 ## .gitignore
 
@@ -127,3 +153,5 @@ To maintain a clean and organized repository, the following items are included i
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
