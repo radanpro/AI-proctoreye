@@ -31,7 +31,7 @@ class StudentsInterface:
         connection = db_manager.connect()
 
         cursor = connection.cursor()
-        cursor.execute("SELECT student_id, student_registration_number, name, image_path FROM students")
+        cursor.execute("SELECT student_id, registration_number, name, image_path FROM students")
         students = cursor.fetchall()
 
         for student in students:

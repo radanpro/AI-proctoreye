@@ -45,7 +45,7 @@ npm-debug.log
 
 # Visual Studio Code settings folder
 .vscode/
-
+api/images/
 /images/
 /image/
 
