@@ -29,17 +29,10 @@ The project is divided into two main parts:
 AI-proctoreye/
 │
 ├── api/                    # Core system and API
-│   ├── models/             # Core classes (Student, ImageProcessor, etc.)
-│   ├── services/           # Services for identity and behavior analysis
-│   ├── controllers/        # API controllers for handling requests
-│   ├── utils/              # Utility functions (database, image handling)
-│   ├── api_server.py       # API server entry point
-│   └── requirements.txt    # Dependencies for the project
+│   ├──
+│   └── requirements.txt    
 │
-├── frontend/               # Mock project for UI and testing
-│   ├── mock_db/            # Mock database for testing
-│   ├── ui/                 # Frontend HTML/CSS files
-│   └── app.js              # Frontend logic
+├── frontend/ 
 │
 └── README.md               # Project documentation
 ```
@@ -90,7 +83,7 @@ AI-proctoreye/
 1. **Run the API Server**:
 
    ```bash
-   python api/api_server.py
+   python api/main.py
    ```
 
 2. **Access the Mock Frontend** to test the system's features during development.
