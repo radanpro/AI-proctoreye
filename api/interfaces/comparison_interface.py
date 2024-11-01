@@ -39,6 +39,7 @@ class ComparisonInterface:
         tk.Button(self.right_frame, text="Back", command=self.show_main_callback).pack(pady=10)
 
         self.captured_image = None
+        self.comparer = ImageComparer()
 
     def show(self):
         self.frame.pack(fill="both", expand=True)
@@ -108,11 +109,11 @@ class ComparisonInterface:
 
                         if face_encodings:
                             captured_encoding = face_encodings[0]
-                            stored_encoding = ImageComparer.image_to_vector(image_path)
+                            stored_encoding = self.comparer.image_to_vector(image_path)
 
-                            similarity_percentage = ImageComparer.compare_vectors(stored_encoding, captured_encoding)
+                            similarity_percentage = self.comparer.compare_vectors(stored_encoding, captured_encoding)
 
-                            if similarity_percentage > 60:  # مثال على العتبة، يمكنك تعديلها حسب الحاجة
+                            if similarity_percentage > 60:  # Example threshold, adjust as needed
                                 messagebox.showinfo("Match Result", f"The captured image matches the stored student image with {similarity_percentage:.2f}% similarity.")
                             else:
                                 messagebox.showinfo("Match Result", f"The captured image does not match the stored student image. Similarity: {similarity_percentage:.2f}%.")
