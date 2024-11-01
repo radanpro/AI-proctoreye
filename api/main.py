@@ -42,7 +42,10 @@ class App:
         self.main_interface.hide()
         self.comparison_interface.hide()
         self.students_interface.hide()
-        self.add_student_interface.show()  # استخدم الدالة show هنا لإظهار واجهة إضافة الطلاب
+        self.add_student_interface.show()
+        # أعادة تحميل واجهة عرض الطلاب لضمان تحديثها
+        self.students_interface.load_students()
+
 
     def check_db_connection(self):
         try:

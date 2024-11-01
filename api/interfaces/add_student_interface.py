@@ -3,6 +3,7 @@ import shutil
 import tkinter as tk
 from tkinter import messagebox, filedialog
 from services.student_data_handler import StudentDataHandler
+import cv2  # إضافة مكتبة cv2 لتحميل الصورة كـ numpy array
 
 class AddStudentInterface:
     def __init__(self, root, app):
@@ -56,12 +57,19 @@ class AddStudentInterface:
         student_name = self.name_entry.get()
         
         if registration_number and student_name and self.image_path:
+            # قراءة الصورة كـ numpy array
+            image = cv2.imread(self.image_path)
+            if image is None:
+                messagebox.showerror("Error", "Failed to read the image.")
+                return
+
             # تجهيز بيانات الطالب بدون student_id (سيتم توليده تلقائيًا)
             student_data = {
                 'student_id': self.data_handler.generate_student_id(),  # توليد معرف الطالب تلقائيًا
                 'registration_number': registration_number,
                 'name': student_name,
-                'image_path': self.image_path
+                'image_path': self.image_path,
+                'image_array': image  # تمرير الصورة كـ numpy array
             }
             # حفظ بيانات الطالب باستخدام data_handler
             if self.data_handler.save_student(student_data):
