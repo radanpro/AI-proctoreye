@@ -1,18 +1,19 @@
 import numpy as np
 import cv2
+import face_recognition
 
 class ImageComparer:
     @staticmethod
     def image_to_vector(image_path):
-        # Read image and convert to grayscale
-        image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-        # Resize the image to a fixed size
-        image = cv2.resize(image, (100, 100))
-        # Flatten the image to a vector
-        return image.flatten()
+        image = face_recognition.load_image_file(image_path)
+        encodings = face_recognition.face_encodings(image)
+        if encodings:
+            return encodings[0]
+        else:
+            raise ValueError("No face detected in the image")
 
     @staticmethod
-    def compare_vectors(vector1, vector2, threshold=1000):
-        # Calculate the Euclidean distance between the vectors
+    def compare_vectors(vector1, vector2):
         distance = np.linalg.norm(vector1 - vector2)
-        return distance < threshold
+        similarity_percentage = (1 - distance) * 100
+        return similarity_percentage
