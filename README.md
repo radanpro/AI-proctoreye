@@ -1,4 +1,3 @@
-
 # AI ProctorEye
 
 **⚠️ This project is currently under active development. Expect frequent updates and changes.**
@@ -11,17 +10,21 @@ AI ProctorEye is an intelligent system designed to verify student identities, mo
 - **Exam Seat Verification**: Confirms that the student is seated in the correct location.
 - **Behavior Monitoring**: Analyzes student behavior during the exam to detect cheating attempts.
 - **Progressive Steps**: The project is structured in steps, where each step builds on the previous one to gradually enhance the system's capabilities.
+- **Student Registration**: New feature to register students via a user-friendly frontend, uploading their image and details to the backend for processing.
+- **Real-time Error Reporting**: The API now returns specific error messages, such as "No face detected in the image," which are displayed in the frontend for better user feedback.
 
 ## Project Structure
 
 The project is divided into two main parts:
 
 1. **Real Project** (Python-based API):
-    - Contains the core functionality of student identity verification and behavior monitoring.
-    - Developed using Python and organized into steps for incremental development.
-  
-2. **Mock Project** (Frontend with Virtual Database):
-    - Contains a mock frontend with virtual data for testing and experimenting during development.
+
+   - Contains the core functionality of student identity verification and behavior monitoring.
+   - Developed using Python and organized into steps for incremental development.
+
+2. **Frontend Project** (React-based UI):
+   - A user interface for registering students, displaying their information, and handling image uploads.
+   - Integrated with the API to facilitate seamless communication between frontend and backend.
 
 ### Directory Structure
 
@@ -30,12 +33,18 @@ AI-proctoreye/
 │
 ├── api/  # Core system and API
 |   ├── databse/
-|   ├── interface/  
-|   ├── services/              
-│   ├── main.py
-│   └── requirements.txt    
+|   ├── interface/
+|   ├── services/
+|   ├── main.py
+|   └── requirements.txt
 │
-├── frontend/ 
+├── frontend/  # React-based UI
+|   ├── src/
+|   |   ├── monitoring/
+|   |   |   └── monitoring.jsx
+|   |   ├── students/
+|   |   |   ├── AddStudent.js
+|   |   |   └── StudentList.js
 │
 └── README.md               # Project documentation
 ```
@@ -61,6 +70,7 @@ AI-proctoreye/
    ```
 
 4. **Activate the Virtual Environment**:
+
    - On **Windows**:
 
      ```bash
@@ -82,18 +92,42 @@ AI-proctoreye/
    ```
 
 6. **Set Up MySQL Database**:
-   - Ensure you have **XAMPP** or another MySQL server running. 
-   - Create a new database for your project and configure the connection settings in your code in `database/database_manager.py` .
+
+   - Ensure you have **XAMPP** or another MySQL server running.
+   - Create a new database for your project and configure the connection settings in your code in `database/database_manager.py`.
+
+7. **Frontend Setup (React)**:
+
+   - Navigate to the `frontend` folder and install necessary dependencies:
+
+     ```bash
+     cd frontend
+     npm install
+     ```
 
 ## Usage
 
 1. **Run the API Server**:
 
+   In the `api` folder, run:
+
    ```bash
-   python api/main.py
+   uvicorn main:app --reload
    ```
 
-2. 
+   This will start the backend API server on `http://localhost:8000`.
+
+2. **Run the React Frontend**:
+
+   In the `frontend` folder, run:
+
+   ```bash
+   npm start
+   ```
+
+   This will start the React development server on `http://localhost:3000`.
+
+   - Open your browser and go to `http://localhost:3000` to access the frontend interface where you can add new students, view the student list, and interact with the backend API.
 
 ## Development Steps
 
@@ -101,6 +135,22 @@ AI-proctoreye/
 2. **Step 2**: Identify the student by comparing their image with all students stored in the database, starting with those taking the exam at the same time.
 3. **Step 3**: Verify the student is seated in the correct location by matching their image with the expected student for that seat.
 4. **Step 4**: Monitor student behavior and detect cheating during the exam.
+5. **Step 5**: Add frontend functionality for registering students with their images and details.
+
+## Error Handling and API Updates
+
+- The API now returns more specific error messages for the frontend to handle, such as:
+  - "No face detected in the image"
+  - "Error saving student data"
+- The React frontend now properly displays these errors using an alert box, ensuring users receive relevant feedback when errors occur.
+
+### Example:
+
+If the API encounters an error such as "No face detected in the image", the frontend will display:
+
+```plaintext
+Error: No face detected in the image
+```
 
 ## Future Improvements
 
@@ -153,5 +203,3 @@ To maintain a clean and organized repository, the following items are included i
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-

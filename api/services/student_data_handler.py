@@ -1,6 +1,7 @@
 import os
 from services.image_vectorizer import ImageVectorizer
 from database.database_manager import DatabaseManager
+import cv2
 
 class StudentDataHandler:
     def __init__(self):
@@ -13,9 +14,20 @@ class StudentDataHandler:
         try:
             connection = self.db_manager.connect()
             cursor = connection.cursor()
+            
+            # التحقق من وجود بيانات في قاعدة البيانات
+            cursor.execute("SELECT COUNT(*) FROM students")
+            student_count = cursor.fetchone()[0]
+            
+            # إذا كانت قاعدة البيانات فارغة، بدأ من الرقم 0
+            if student_count == 0:
+                return 0
+
+            # إذا كانت هناك بيانات، استخدم آخر student_id
             cursor.execute("SELECT MAX(student_id) FROM students")
             last_id = cursor.fetchone()[0]
-            return (last_id + 1) if last_id is not None else 1
+            return (last_id + 1) if last_id is not None else 0
+
         except Exception as e:
             print(f"Error generating student ID: {e}")
             return None
@@ -25,6 +37,7 @@ class StudentDataHandler:
             if connection is not None:
                 self.db_manager.close()
 
+
     def save_student(self, student_data):
         connection = None
         cursor = None
@@ -32,8 +45,10 @@ class StudentDataHandler:
             student_data['student_id'] = self.generate_student_id()
             if student_data['student_id'] is None:
                 return False
-            
-            face_embedding = self.vectorizer.image_to_vector(student_data['image_array'])
+            face_embedding = self.vectorizer.image_to_vector(cv2.imread(student_data['image_array']))
+            # face_embedding = self.vectorizer.image_to_vector(student_data['image_array'])
+            print("face_embedding")
+            print(face_embedding)
             student_data['face_embedding'] = face_embedding.tolist()
 
             connection = self.db_manager.connect()
@@ -52,8 +67,8 @@ class StudentDataHandler:
             connection.commit()
             return True
         except Exception as e:
-            print(f"Error saving student data: {e}")
-            return False
+            error_message = f"Error saving student data: {str(e)}"
+            raise ValueError(error_message)
         finally:
             if cursor is not None:
                 cursor.close()
