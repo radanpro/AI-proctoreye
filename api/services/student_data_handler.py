@@ -67,8 +67,7 @@ class StudentDataHandler:
             if student_data['student_id'] is None:
                 return False
             face_embedding = self.vectorizer.image_to_vector(cv2.imread(student_data['image_array']))
-            print("face_embedding")
-            print(face_embedding)
+            # print("face_embedding",face_embedding)
             student_data['face_embedding'] = face_embedding.tolist()
 
             connection = self.db_manager.connect()

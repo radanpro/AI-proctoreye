@@ -15,7 +15,7 @@ const AddStudent = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/add_student",
+        "http://localhost:8000/api/add_student",
         formData,
         {
           headers: {

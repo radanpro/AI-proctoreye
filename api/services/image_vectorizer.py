@@ -8,9 +8,9 @@ class ImageVectorizer:
     def image_to_vector(image):
         if isinstance(image, str):
             image = cv2.imread(image)
-        print('image', image)
+        # print('image', image)
         face_image = FaceDetector.detect_and_crop_face(image)
-        print('face_image', face_image)
+        # print('face_image', face_image)
         enhanced_image = ImagePreprocessor.enhance_image(face_image)
         face_encodings = face_recognition.face_encodings(enhanced_image)
         if face_encodings:

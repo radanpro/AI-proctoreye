@@ -15,7 +15,7 @@ const CompareImage = () => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/compare_image",
+        "http://127.0.0.1:8000/api/compare_image",
         formData,
         {
           headers: {
