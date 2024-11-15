@@ -5,6 +5,7 @@ const CompareImage = () => {
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [capturedImage, setCapturedImage] = useState(null);
   const [similarity, setSimilarity] = useState(null);
+  const [message, setMessage] = useState(null);
 
   const handleCompare = async (e) => {
     e.preventDefault();
@@ -22,7 +23,8 @@ const CompareImage = () => {
           },
         }
       );
-      setSimilarity(response.data.similarity);
+      setSimilarity(response.data.average_similarity);
+      setMessage(response.data.message);
     } catch (error) {
       alert("Failed to compare images");
     }
@@ -51,6 +53,14 @@ const CompareImage = () => {
           Compare Image
         </button>
       </form>
+      {message !== null && (
+        <div className="mt-4 p-4 bg-green-100 border border-green-500 rounded">
+          <h3 className="text-lg font-semibold">
+            similarity_threshold: {message} ^_^
+          </h3>
+        </div>
+      )}
+      <br />
       {similarity !== null && (
         <div className="mt-4 p-4 bg-blue-100 border border-blue-500 rounded">
           <h3 className="text-lg font-semibold">
