@@ -1,14 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import axios from "axios";
+import CameraCapture from "./CameraCapture";
 
 const CompareImage = () => {
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [capturedImage, setCapturedImage] = useState(null);
   const [similarity, setSimilarity] = useState(null);
   const [message, setMessage] = useState(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [useCamera, setUseCamera] = useState(false);
+
+  const fileInputRef = useRef(null);
 
   const handleCompare = async (e) => {
     e.preventDefault();
+
+    if (registrationNumber.length < 6) {
+      setError("رقم التسجيل يجب أن يكون 6 أرقام على الأقل");
+      return;
+    }
+
+    if (!capturedImage) {
+      setError("يرجى اختيار صورة للمقارنة");
+      return;
+    }
+
+    setError("");
+    setLoading(true);
+    setSimilarity(null);
+    setMessage(null);
+
     const formData = new FormData();
     formData.append("registration_number", registrationNumber);
     formData.append("captured_image", capturedImage);
@@ -26,7 +48,15 @@ const CompareImage = () => {
       setSimilarity(response.data.average_similarity);
       setMessage(response.data.message);
     } catch (error) {
-      alert("Failed to compare images");
+      setError("فشلت عملية مقارنة الصور");
+    } finally {
+      setLoading(false);
+      setRegistrationNumber("");
+      setCapturedImage(null);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
     }
   };
 
@@ -41,31 +71,57 @@ const CompareImage = () => {
           onChange={(e) => setRegistrationNumber(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded"
         />
-        <input
-          type="file"
-          onChange={(e) => setCapturedImage(e.target.files[0])}
-          className="w-full p-2 border border-gray-300 rounded"
-        />
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+        <div className="flex gap-4">
+          <button
+            type="button"
+            onClick={() => setUseCamera(false)}
+            className={`w-1/2 p-2 rounded ${
+              !useCamera ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
+          >
+            Choose Image
+          </button>
+          <button
+            type="button"
+            onClick={() => setUseCamera(true)}
+            className={`w-1/2 p-2 rounded ${
+              useCamera ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
+          >
+            Open Camera
+          </button>
+        </div>
+
+        {!useCamera && (
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={(e) => setCapturedImage(e.target.files[0])}
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+        )}
+
+        {useCamera && <CameraCapture setCapturedImage={setCapturedImage} />}
+
         <button
           type="submit"
+          disabled={loading}
           className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Compare Image
+          {loading ? "جاري المقارنة..." : "Compare Image"}
         </button>
       </form>
-      {message !== null && (
+
+      {message && (
         <div className="mt-4 p-4 bg-green-100 border border-green-500 rounded">
-          <h3 className="text-lg font-semibold">
-            similarity_threshold: {message} ^_^
-          </h3>
+          <h3 className="text-lg font-semibold">{message}</h3>
         </div>
       )}
-      <br />
-      {similarity !== null && (
+      {similarity && (
         <div className="mt-4 p-4 bg-blue-100 border border-blue-500 rounded">
-          <h3 className="text-lg font-semibold">
-            Similarity Percentage: {similarity}%
-          </h3>
+          <h3 className="text-lg font-semibold">Similarity: {similarity}%</h3>
         </div>
       )}
     </div>

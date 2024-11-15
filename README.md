@@ -86,7 +86,7 @@ AI-proctoreye/
 
 5. **Install Dependencies**:
 
-   After activating the virtual environment, install the required dependencies from the `requirements.txt` file:
+   After activating the virtual environment, install the required dependencies from the `requirements.txt` file (on api folder):
 
    ```bash
    pip install -r api/requirements.txt
@@ -94,7 +94,7 @@ AI-proctoreye/
 
 6. **Set Up MySQL Database**:
 
-   - Ensure you have **XAMPP** or another MySQL server running.
+   - Ensure you have **XAMPP** or another MySQL server running to:
    - Create a new database for your project and configure the connection settings in your code in `database/database_manager.py`.
 
 7. **Frontend Setup (React)**:

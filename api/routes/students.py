@@ -67,7 +67,7 @@ async def get_students():
     if not connection.is_connected():
         raise HTTPException(status_code=500, detail="MySQL Connection not available")
     cursor = connection.cursor(dictionary=True)
-    cursor.execute("SELECT registration_number, name, image_path FROM students")
+    cursor.execute("SELECT registration_number, name, image_path FROM students ORDER BY student_id DESC")
     students = cursor.fetchall()
     cursor.close()
     db_manager.close()
