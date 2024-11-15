@@ -93,7 +93,6 @@ async def add_student(name: str = Form(...), registration_number: str = Form(...
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
 
-
 @app.get("/students")
 async def get_students():
     connection = db_manager.connect()
@@ -104,7 +103,13 @@ async def get_students():
     students = cursor.fetchall()
     cursor.close()
     db_manager.close()
+    
+    # تعديل المسار لإضافة رابط الصورة الكامل
+    for student in students:
+        student['image_url'] = f"http://127.0.0.1:8000/{student['image_path']}"
+    
     return JSONResponse(content=students, status_code=200)
+
 
 @app.post("/compare_image")
 async def compare_image(registration_number: str = Form(...), captured_image: UploadFile = File(...)):

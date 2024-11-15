@@ -27,7 +27,7 @@ const StudentList = () => {
             className="p-2 border-b border-gray-200 flex items-center"
           >
             <img
-              src={`http://127.0.0.1:8000/images/${student.image_path}`}
+              src={student.image_url} // استخدم image_url هنا
               alt={student.name}
               className="w-16 h-16 rounded-full mr-4"
             />
