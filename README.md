@@ -66,6 +66,7 @@ AI-proctoreye/
 3. **Create a Virtual Environment**:
 
    ```bash
+   cd api
    python -m venv venv
    ```
 
