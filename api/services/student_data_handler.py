@@ -37,16 +37,36 @@ class StudentDataHandler:
             if connection is not None:
                 self.db_manager.close()
 
+    def is_registration_number_exists(self, registration_number):
+        connection = None
+        cursor = None
+        try:
+            connection = self.db_manager.connect()
+            cursor = connection.cursor()
+            cursor.execute("SELECT COUNT(*) FROM students WHERE registration_number = %s", (registration_number,))
+            count = cursor.fetchone()[0]
+            return count > 0
+        except Exception as e:
+            print(f"Error checking registration number: {e}")
+            return False
+        finally:
+            if cursor is not None:
+                cursor.close()
+            if connection is not None:
+                self.db_manager.close()
 
     def save_student(self, student_data):
         connection = None
         cursor = None
         try:
+            # التحقق من وجود الرقم المسجل في قاعدة البيانات
+            if self.is_registration_number_exists(student_data['registration_number']):
+                raise ValueError(f"Student with registration number {student_data['registration_number']} already exists.")
+
             student_data['student_id'] = self.generate_student_id()
             if student_data['student_id'] is None:
                 return False
             face_embedding = self.vectorizer.image_to_vector(cv2.imread(student_data['image_array']))
-            # face_embedding = self.vectorizer.image_to_vector(student_data['image_array'])
             print("face_embedding")
             print(face_embedding)
             student_data['face_embedding'] = face_embedding.tolist()

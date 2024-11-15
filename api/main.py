@@ -69,11 +69,15 @@ async def add_student(name: str = Form(...), registration_number: str = Form(...
         
         # إنشاء كائن من StudentDataHandler
         student_data_handler = StudentDataHandler()
-        student_data['student_id'] = student_data_handler.generate_student_id()
 
-        # التحقق من معرف الطالب
-        if student_data['student_id'] is None:
-            raise HTTPException(status_code=500, detail="Failed to generate a unique student ID.")
+        # التحقق من وجود الرقم المسجل في قاعدة البيانات
+        try:
+            student_data['student_id'] = student_data_handler.generate_student_id()
+            # إذا كان الرقم المسجل موجودًا مسبقًا
+            if student_data_handler.is_registration_number_exists(registration_number):
+                raise HTTPException(status_code=400, detail="Student with this registration number already exists.")
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
 
         # حفظ بيانات الطالب في قاعدة البيانات
         result = student_data_handler.save_student(student_data)
@@ -81,6 +85,7 @@ async def add_student(name: str = Form(...), registration_number: str = Form(...
             raise HTTPException(status_code=500, detail="Failed to save student data to the database.")
 
         return JSONResponse(content={"status": "success", "message": "Student added successfully"}, status_code=201)
+    
     except HTTPException as e:
         raise e
     except ValueError as e:
