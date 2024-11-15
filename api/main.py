@@ -8,6 +8,9 @@ from services.student_data_handler import StudentDataHandler
 from services.image_vectorizer import ImageVectorizer
 import cv2
 import numpy as np
+from services.image_comparer import ImageComparer 
+import face_recognition
+
 
 # تأكد من أن مجلد images موجود
 if not os.path.exists("images"):
@@ -113,29 +116,46 @@ async def get_students():
 
 @app.post("/compare_image")
 async def compare_image(registration_number: str = Form(...), captured_image: UploadFile = File(...)):
-    comparer = ImageComparer()
-    captured_image_data = np.frombuffer(await captured_image.read(), np.uint8)
-    captured_image_array = cv2.imdecode(captured_image_data, cv2.IMREAD_COLOR)
+    try:
+        # التحقق من وجود الكائن ImageComparer
+        comparer = ImageComparer()
+        
+        # قراءة البيانات الخاصة بالصورة الملتقطة
+        print('captured_image_data dddd')
+        captured_image_data = np.frombuffer(await captured_image.read(), np.uint8)
+        # print('captured_image_data',captured_image_data)
+        captured_image_array = cv2.imdecode(captured_image_data, cv2.IMREAD_COLOR)
+        # print('captured_image_array',captured_image_array)
+        connection = db_manager.connect()
+        cursor = connection.cursor()
+        cursor.execute("SELECT image_path FROM students WHERE registration_number = %s ORDER BY student_id DESC", (registration_number,))
+        result = cursor.fetchone()
+        # print('hello world')
+        cursor.close()
+        # print('hello world')
+        if result:
+            stored_image_path = result[0]
+            
+            stored_encoding = comparer.image_to_vector(stored_image_path)
+            # print('stored_encoding',stored_encoding)
+            # الكشف عن الوجوه في الصورة الملتقطة
+            face_locations = face_recognition.face_locations(captured_image_array)
+            face_encodings = face_recognition.face_encodings(captured_image_array, face_locations)
 
-    connection = db_manager.connect()
-    cursor = connection.cursor()
-    cursor.execute("SELECT image_path FROM students WHERE registration_number = %s", (registration_number,))
-    result = cursor.fetchone()
-    cursor.close()
-
-    if result:
-        stored_image_path = result[0]
-        stored_encoding = comparer.image_to_vector(stored_image_path)
-        face_locations = face_recognition.face_locations(captured_image_array)
-        face_encodings = face_recognition.face_encodings(captured_image_array, face_locations)
-
-        if face_encodings:
-            captured_encoding = face_encodings[0]
-            similarity_percentage = comparer.compare_vectors(stored_encoding, captured_encoding)
-            return JSONResponse(content={"status": "success", "similarity": similarity_percentage}, status_code=200)
+            if face_encodings:
+                # مقارنة المتجهات
+                captured_encoding = face_encodings[0]
+                similarity_percentage = comparer.compare_vectors(stored_encoding, captured_encoding)
+                
+                # إرجاع نسبة التشابه
+                return JSONResponse(content={"status": "success", "similarity": similarity_percentage}, status_code=200)
+            else:
+                return JSONResponse(content={"status": "error", "message": "No faces detected in captured image"}, status_code=400)
         else:
-            return JSONResponse(content={"status": "error", "message": "No faces detected"}, status_code=400)
-    return JSONResponse(content={"status": "error", "message": "Student not found"}, status_code=404)
+            return JSONResponse(content={"status": "error", "message": "Student not found"}, status_code=404)
+    except Exception as e:
+        return JSONResponse(content={"status": "error", "message": f"Error occurred: {str(e)}"}, status_code=500)
+
 
 @app.get("/")
 async def home():
