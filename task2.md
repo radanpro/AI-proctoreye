@@ -233,50 +233,57 @@ Develop a system to identify individuals using multiple input sources:
 
 ### **الأعضاء والمسؤوليات**
 
-<table style="width: 100%; border: 1px solid #ddd; border-collapse: collapse; text-align: right;">
-  <thead>
-    <tr style="background-color: #3073A3FF; text-align: center;">
-      <th style="padding: 10px; border: 1px solid #ddd;">الأعضاء</th>
-      <th style="padding: 10px; border: 1px solid #ddd;">المهمة</th>
-      <th style="padding: 10px; border: 1px solid #ddd;">الملف/الموقع</th>
-      <th style="padding: 10px; border: 1px solid #ddd;">الوصف</th>
+<style>
+  td, th {
+    border: 1px solid #31B57EFF; /* إطار حول كل خلية */
+    padding: 10px;
+    border-radius: 5px; /* الزوايا المنحنية */
+  }
+</style>
+
+<table style="width: 100%; text-align: right; border-collapse: separate; border-spacing: 10px; ">
+  <thead >
+    <tr style="background-color: #86B7DBFF; text-align: center;">
+      <th style="padding: 10px; border: 1px solid #31B57EFF;">الأعضاء</th>
+      <th style="padding: 10px; border: 1px solid #31B57EFF;">المهمة</th>
+      <th style="padding: 10px; border: 1px solid #31B57EFF;">الملف/الموقع</th>
+      <th style="padding: 10px; border: 1px solid #31B57EFF;">الوصف</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td style="padding: 10px; border: 1px solid #ddd;">مالك وعبدالعزيز</td>
-      <td  rowspan="2" style="padding: 10px; border: 1px solid #ddd;">تطوير واجهة إدخال متعددة المصادر</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">`frontend/src/pages/` Ex. `VideoAnalysis`</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">- إضافة قائمة منسدلة لاختيار نوع الإدخال (فيديو، صور، كاميرا، كاميرات المراقبة).<br>- إنشاء نماذج لرفع الملفات أو إدخال عنوان الـ IP.<br>- عرض معاينة للمصدر المدخل.</td>
+      <td rowspan="2" style="padding: 10px; border: 1px solid #31B57EFF;">مالك وعبدالعزيز</td>
+      <td  style="padding: 10px; border: 1px solid #31B57EFF;">تطوير واجهة إدخال متعددة المصادر</td>
+      <td rowspan="2" style="padding: 10px; border: 1px solid #31B57EFF;">`frontend/src/pages/` Ex. `VideoAnalysis`</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">- إضافة قائمة منسدلة لاختيار نوع الإدخال (فيديو، صور، كاميرا، كاميرات المراقبة).<br>- إنشاء نماذج لرفع الملفات أو إدخال عنوان الـ IP.<br>- عرض معاينة للمصدر المدخل.</td>
     </tr>
     <tr>
-      <td style="padding: 10px; border: 1px solid #ddd;">مالك وعبدالعزيز</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">عرض النتائج بشكل ديناميكي</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">- عرض النتائج بناءً على نوع المدخل.<br>- عرض هوية الشخص أو "غير معروف".<br>- تضمين تفاصيل مثل عدد الإطارات التي تمت معالجتها وعدد الوجوه المكتشفة.</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">عرض النتائج بشكل ديناميكي</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">- عرض النتائج بناءً على نوع المدخل.<br>- عرض هوية الشخص أو "غير معروف".<br>- تضمين تفاصيل مثل عدد الإطارات التي تمت معالجتها وعدد الوجوه المكتشفة.</td>
     </tr>
     <tr>
-      <td style="padding: 10px; border: 1px solid #ddd;">هادي</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">تطوير معالجة المدخلات في VideoProcessor</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">`ProctorEye/api/services/video_processor.py`</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">- معالجة ملفات الفيديو واستخراج الإطارات.<br>- التعامل مع الصور المرفوعة.<br>- إدارة بث الكاميرات المباشرة والاتصال بكاميرات المراقبة.</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">هادي</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">تطوير معالجة المدخلات في VideoProcessor</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">`ProctorEye/api/services/video_processor.py`</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">- معالجة ملفات الفيديو واستخراج الإطارات.<br>- التعامل مع الصور المرفوعة.<br>- إدارة بث الكاميرات المباشرة والاتصال بكاميرات المراقبة.</td>
     </tr>
     <tr>
-      <td style="padding: 10px; border: 1px solid #ddd;">مصعب</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">تحسين جودة الإطارات المستخرجة</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">`ProctorEye/api/services/image_enhancer.py`</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">- تطبيق Super-Resolution لتحسين جودة الصور.<br>- تحسين الصور منخفضة الجودة القادمة من الكاميرات أو الفيديوهات.</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">مصعب</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">تحسين جودة الإطارات المستخرجة</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">`ProctorEye/api/services/image_enhancer.py`</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">- تطبيق Super-Resolution لتحسين جودة الصور.<br>- تحسين الصور منخفضة الجودة القادمة من الكاميرات أو الفيديوهات.</td>
     </tr>
     <tr>
-      <td style="padding: 10px; border: 1px solid #ddd;">هادي وعبدالرحمن</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">تحسين المطابقة الجماعية للوجوه</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">`ProctorEye/api/services/face_matcher.py`</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">- تكييف مطابقة الوجه باستخدام FAISS لدعم المدخلات متعددة المصادر.<br>- ضمان سرعة ودقة عالية للمطابقة حتى مع قواعد بيانات ضخمة.</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">هادي وعبدالرحمن</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">تحسين المطابقة الجماعية للوجوه</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">`ProctorEye/api/services/face_matcher.py`</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">- تكييف مطابقة الوجه باستخدام FAISS لدعم المدخلات متعددة المصادر.<br>- ضمان سرعة ودقة عالية للمطابقة حتى مع قواعد بيانات ضخمة.</td>
     </tr>
     <tr>
-      <td style="padding: 10px; border: 1px solid #ddd;">عبدالرحمن</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">إنشاء واجهة API متعددة المصادر</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">`ProctorEye/api/routes/video_analysis.py`</td>
-      <td style="padding: 10px; border: 1px solid #ddd;">- إدارة المصادر المدخلة: الفيديو، الصور، الكاميرا، كاميرات المراقبة.<br>- التكامل مع VideoProcessor وImageEnhancer وFaceMatcher.<br>- إرجاع النتائج الديناميكية لكل نوع مدخل.</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">عبدالرحمن</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">إنشاء واجهة API متعددة المصادر</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">`ProctorEye/api/routes/video_analysis.py`</td>
+      <td style="padding: 10px; border: 1px solid #31B57EFF;">- إدارة المصادر المدخلة: الفيديو، الصور، الكاميرا، كاميرات المراقبة.<br>- التكامل مع VideoProcessor وImageEnhancer وFaceMatcher.<br>- إرجاع النتائج الديناميكية لكل نوع مدخل.</td>
     </tr>
   </tbody>
 </table>
