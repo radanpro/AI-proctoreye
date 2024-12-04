@@ -6,10 +6,12 @@ const CompareImage = () => {
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [capturedImage, setCapturedImage] = useState(null);
   const [similarity, setSimilarity] = useState(null);
+  const [verified, setVerified] = useState(null);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [useCamera, setUseCamera] = useState(false);
+  const [comparisonType, setComparisonType] = useState("deepface"); // افتراضي هو deepface
 
   const fileInputRef = useRef(null);
 
@@ -29,23 +31,35 @@ const CompareImage = () => {
     setError("");
     setLoading(true);
     setSimilarity(null);
+    setVerified(null);
     setMessage(null);
 
     const formData = new FormData();
     formData.append("registration_number", registrationNumber);
     formData.append("captured_image", capturedImage);
 
+    let apiUrl = "";
+    if (comparisonType === "deepface") {
+      apiUrl = "http://127.0.0.1:8000/api/compare_image_deepface"; // API لـ DeepFace
+    } else if (comparisonType === "image_recognition") {
+      apiUrl = "http://127.0.0.1:8000/api/compare_image_recognition"; // API لـ Image Recognition
+    }
+
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/compare_image",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setSimilarity(response.data.average_similarity);
+      const response = await axios.post(apiUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      const similarityData =
+        response.data.average_similarity || response.data.similarity;
+
+      if (typeof similarityData === "object" && similarityData !== null) {
+        setSimilarity(similarityData.threshold);
+        setVerified(similarityData.verified);
+      } else {
+        setSimilarity(similarityData);
+      }
       setMessage(response.data.message);
     } catch (error) {
       setError("فشلت عملية مقارنة الصور");
@@ -94,6 +108,18 @@ const CompareImage = () => {
           </button>
         </div>
 
+        <div className="mt-4">
+          <label className="mr-2">Choose Comparison Type:</label>
+          <select
+            value={comparisonType}
+            onChange={(e) => setComparisonType(e.target.value)}
+            className="p-2 border border-gray-300 rounded"
+          >
+            <option value="deepface">DeepFace</option>
+            <option value="image_recognition">Image Recognition</option>
+          </select>
+        </div>
+
         {!useCamera && (
           <input
             type="file"
@@ -119,9 +145,14 @@ const CompareImage = () => {
           <h3 className="text-lg font-semibold">{message}</h3>
         </div>
       )}
-      {similarity && (
+      {similarity !== null && (
         <div className="mt-4 p-4 bg-blue-100 border border-blue-500 rounded">
-          <h3 className="text-lg font-semibold">distance: {similarity}%</h3>
+          <h3 className="text-lg font-semibold">
+            Similarity: {similarity.toFixed(2)}%
+          </h3>
+          <h3 className="text-lg font-semibold">
+            Verified: {verified ? "Yes" : "No"}
+          </h3>
         </div>
       )}
     </div>
