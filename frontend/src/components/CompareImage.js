@@ -56,11 +56,17 @@ const CompareImage = () => {
 
       const { status, message, similarity, verified, next_exam_date } =
         response.data;
-
-      setMessage(message);
-      setSimilarity(similarity || null);
-      setVerified(verified || null);
-      setNextExamDate(next_exam_date || null); // حفظ التاريخ إذا كان موجودًا
+      if (status === "success") {
+        setMessage(message);
+        setSimilarity(similarity || null);
+        setVerified(true);
+        setNextExamDate(next_exam_date || null);
+      } else if (status === "error") {
+        setMessage(message);
+        setSimilarity(similarity || null);
+        setVerified(false);
+        setNextExamDate(next_exam_date || null);
+      }
     } catch (error) {
       setError("فشلت عملية مقارنة الصور");
     } finally {
