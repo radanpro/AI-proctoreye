@@ -16,6 +16,23 @@ import face_recognition
 
 router = APIRouter()
 
+def send_exam_status_to_api(student, next_exam_date, message):
+    return JSONResponse(
+        content={
+            "status": "error",
+            "message":message,
+            "student_data":{
+                "name":student[1],
+                "registration_number":student[2],
+                "college":student[3],
+                "level":student[4],
+                "specialization":student[5],
+            },
+            "next_exam_date":next_exam_date,
+        },
+        status_code=403,
+    )
+
 @router.post("/compare_image_deepface")
 async def compare_image(registration_number: str = Form(...), captured_image: UploadFile = File(...)):
     # تهيئة الكلاسات
@@ -23,7 +40,6 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
     identity_verifier = IdentityVerifier()
     embedding_generator = EmbeddingGenerator()
     try:
-        
         db_manager = DatabaseManager()
         db_manager.connect()
         db_manager.create_tables()
@@ -32,8 +48,7 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
         if not student_data:
             db_manager.close()
             return JSONResponse(
-                content={"status": "error", "message": "Student not found."},
-                status_code=404,
+                content={"status": "error", "message": "Student not found."},status_code=404,
             )
         student = student_data[0]  # بيانات الطالب
         student_college = student[3]  # الكلية
@@ -63,13 +78,7 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
             next_exam_date = min([exam[1] for exam in upcoming_exam]) if upcoming_exam else "No upcoming exams"
             db_manager.close()
             print("next_exam_date",next_exam_date)
-            return JSONResponse(
-                content={
-                    "status": "error",
-                    "message": f"Today is not the exam date. Next exam is on {next_exam_date}.",
-                },
-                status_code=403,
-            )
+            return send_exam_status_to_api(student, next_exam_date, f"Today is not the exam date. Next exam is on {next_exam_date}.")
         
         # for exam in exam_data:
         #     print(f"Exam found: {exam}")
@@ -187,13 +196,7 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
             next_exam_date = min([exam[1] for exam in upcoming_exam]) if upcoming_exam else "No upcoming exams"
             db_manager.close()
             print('next_exam_date', next_exam_date)
-            return JSONResponse(
-                content={
-                    "status": "error",
-                    "message": f"Today is not the exam date. Next exam is on {next_exam_date}.",
-                },
-                status_code=403,
-            )
+            return send_exam_status_to_api(student, next_exam_date, f"Today is not the exam date. Next exam is on {next_exam_date}.")
 
         # قراءة البيانات الخاصة بالصورة الملتقطة
         captured_image_data = np.frombuffer(await captured_image.read(), np.uint8)
