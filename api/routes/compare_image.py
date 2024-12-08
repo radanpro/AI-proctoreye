@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Form, File, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Form, File, UploadFile, Response, HTTPException
 import numpy as np
 import cv2
 import os
+import json
 from datetime import datetime
 from services_v2.embedding_storage import EmbeddingStorage
 from services_v2.identity_verifier import IdentityVerifier
@@ -16,22 +16,20 @@ import face_recognition
 
 router = APIRouter()
 
-def send_exam_status_to_api(student, next_exam_date, message):
-    return JSONResponse(
-        content={
-            "status": "error",
-            "message":message,
-            "student_data":{
-                "name":student[1],
-                "registration_number":student[2],
-                "college":student[3],
-                "level":student[4],
-                "specialization":student[5],
-            },
-            "next_exam_date":next_exam_date,
+def send_exam_status_to_api(student, next_exam_date, message, status_code=403):
+    content={
+        "status": "error",
+        "message":message,
+        "student_data":{
+            "name":student[1],
+            "registration_number":student[2],
+            "college":student[3],
+            "level":student[4],
+            "specialization":student[5],
         },
-        status_code=403,
-    )
+        "next_exam_date":next_exam_date,
+    }
+    return Response(content=json.dumps(content), media_type="application/json", status_code=status_code)
 
 @router.post("/compare_image_deepface")
 async def compare_image(registration_number: str = Form(...), captured_image: UploadFile = File(...)):
@@ -47,8 +45,8 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
         student_data = db_manager.student_db.find(Number=registration_number)
         if not student_data:
             db_manager.close()
-            return JSONResponse(
-                content={"status": "error", "message": "Student not found."},status_code=404,
+            return Response(
+                content=json.dumps({"status": "error", "message": "Student not found."}),media_type="application/json",status_code=404
             )
         student = student_data[0]  # بيانات الطالب
         student_college = student[3]  # الكلية
@@ -78,7 +76,7 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
             next_exam_date = min([exam[1] for exam in upcoming_exam]) if upcoming_exam else "No upcoming exams"
             db_manager.close()
             print("next_exam_date",next_exam_date)
-            return send_exam_status_to_api(student, next_exam_date, f"Today is not the exam date. Next exam is on {next_exam_date}.")
+            return send_exam_status_to_api(student, next_exam_date, f"Today is not the exam date. Next exam is on {next_exam_date}.", 403)
         
         # for exam in exam_data:
         #     print(f"Exam found: {exam}")

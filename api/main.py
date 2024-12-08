@@ -2,16 +2,13 @@ import os
 import cv2
 import face_recognition
 import numpy as np
+import uvicorn
 ## FastAPI
 from fastapi import FastAPI, Form, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-## files
-from database.database_manager import DatabaseManager
-from services.student_data_handler import StudentDataHandler
-from services.image_vectorizer import ImageVectorizer
-from services.image_comparer import ImageComparer 
+
 # routes
 from routes.compare_image import router as compare_image_router
 from routes.students import router as students_router
@@ -65,5 +62,5 @@ async def home():
     return "Welcome to the Home Page!"
 
 if __name__ == "__main__":
-    import uvicorn
+    
     uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")

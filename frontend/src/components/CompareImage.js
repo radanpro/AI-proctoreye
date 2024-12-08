@@ -6,6 +6,7 @@ const CompareImage = () => {
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [capturedImage, setCapturedImage] = useState(null);
   const [similarity, setSimilarity] = useState(null);
+  const [student_data, setStudent_data] = useState(null);
   const [verified, setVerified] = useState(null);
   const [message, setMessage] = useState(null);
   const [nextExamDate, setNextExamDate] = useState(null); // للتاريخ الأقرب
@@ -35,6 +36,7 @@ const CompareImage = () => {
     setVerified(null);
     setMessage(null);
     setNextExamDate(null);
+    setStudent_data(null);
 
     const formData = new FormData();
     formData.append("registration_number", registrationNumber);
@@ -53,22 +55,37 @@ const CompareImage = () => {
           "Content-Type": "multipart/form-data",
         },
       });
+      // console.log("response", response);
+      // console.log("status", response.data.status);
 
-      const { status, message, similarity, verified, next_exam_date } =
-        response.data;
-      if (status === "success") {
-        setMessage(message);
-        setSimilarity(similarity || null);
+      if (response.data.status === "success") {
+        setMessage(response.data.message);
+        setSimilarity(response.data.similarity || null);
+        setStudent_data(response.data.student_data || null);
         setVerified(true);
-        setNextExamDate(next_exam_date || null);
-      } else if (status === "error") {
-        setMessage(message);
-        setSimilarity(similarity || null);
+        setNextExamDate(response.data.next_exam_date || null);
+      } else if (response.data.status === "error") {
+        setMessage(response.data.message);
+        setSimilarity(response.data.similarity || null);
+        setStudent_data(response.data.student_data || null);
         setVerified(false);
-        setNextExamDate(next_exam_date || null);
+        setNextExamDate(response.data.next_exam_date || null);
       }
     } catch (error) {
-      setError("فشلت عملية مقارنة الصور");
+      // console.error("success:", error.response.data.status);
+      // console.error("message:", error.response.data.message);
+      // console.error("Error response:", error.response);
+      if (error.response) {
+        setMessage(error.response.data.message);
+        setStudent_data(error.response.data.student_data || null);
+        setVerified(false);
+        setNextExamDate(error.response.data.next_exam_date || null);
+        setError(
+          `فشل الاتصال: ${error.response.data.message || error.message}`
+        );
+      } else {
+        setError("فشلت عملية مقارنة الصور: تأكد من الاتصال بالخادم.");
+      }
     } finally {
       setLoading(false);
       setRegistrationNumber("");
@@ -164,6 +181,27 @@ const CompareImage = () => {
         <div className="mt-4 p-4 bg-blue-100 border border-blue-500 rounded">
           <h3 className="text-lg font-semibold">
             Similarity: {similarity.toFixed(2)}%
+          </h3>
+          <h3 className="text-lg font-semibold">
+            Verified: {verified ? "Yes" : "No"}
+          </h3>
+        </div>
+      )}
+      {student_data !== null && (
+        <div className="mt-4 p-4 bg-blue-100 border border-blue-500 rounded">
+          <h3 className="text-lg font-semibold">Name: {student_data.name}</h3>
+          <h3 className="text-lg font-semibold">
+            Registration Number: {student_data.registration_number}
+          </h3>
+          <h3 className="text-lg font-semibold">
+            College: {student_data.college}
+          </h3>
+          <h3 className="text-lg font-semibold">Level: {student_data.level}</h3>
+          <h3 className="text-lg font-semibold">
+            Specialization: {student_data.specialization}
+          </h3>
+          <h3 className="text-lg font-semibold">
+            Similarity: {similarity !== null ? similarity.toFixed(2) : "N/A"}%
           </h3>
           <h3 className="text-lg font-semibold">
             Verified: {verified ? "Yes" : "No"}
