@@ -4,6 +4,8 @@
 
 AI ProctorEye is an intelligent system designed to verify student identities, monitor their behavior during exams, and ensure a secure and fair examination environment. The project leverages AI techniques such as face recognition, barcode scanning, and behavior analysis to detect suspicious activity and prevent cheating.
 
+---
+
 ## Features
 
 - **Student Identity Verification**: Matches a student's current image with the one stored in the database using barcode information.
