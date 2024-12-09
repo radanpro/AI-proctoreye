@@ -1,5 +1,4 @@
 import os
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 import cv2
 import numpy as np
 from fastapi import APIRouter, Form, File, UploadFile, HTTPException
@@ -8,6 +7,7 @@ from services.student_data_handler import StudentDataHandler
 from database.database_manager import DatabaseManager
 from services_v2.embedding_generator import EmbeddingGenerator
 from services_v2.embedding_storage import EmbeddingStorage
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 
 router = APIRouter()

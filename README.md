@@ -1,10 +1,7 @@
 # AI ProctorEye
 
-<<<<<<< HEAD
 **⚠️ This project is currently under active development. Expect frequent updates and changes.**
 
-=======
->>>>>>> 0fe5d27 (create readme.me file)
 AI ProctorEye is an intelligent system designed to verify student identities, monitor their behavior during exams, and ensure a secure and fair examination environment. The project leverages AI techniques such as face recognition, barcode scanning, and behavior analysis to detect suspicious activity and prevent cheating.
 
 ## Features
@@ -13,18 +10,14 @@ AI ProctorEye is an intelligent system designed to verify student identities, mo
 - **Exam Seat Verification**: Confirms that the student is seated in the correct location.
 - **Behavior Monitoring**: Analyzes student behavior during the exam to detect cheating attempts.
 - **Progressive Steps**: The project is structured in steps, where each step builds on the previous one to gradually enhance the system's capabilities.
-<<<<<<< HEAD
 - **Student Registration**: New feature to register students via a user-friendly frontend, uploading their image and details to the backend for processing.
 - **Real-time Error Reporting**: The API now returns specific error messages, such as "No face detected in the image," which are displayed in the frontend for better user feedback.
-=======
->>>>>>> 0fe5d27 (create readme.me file)
 
 ## Project Structure
 
 The project is divided into two main parts:
 
 1. **Real Project** (Python-based API):
-<<<<<<< HEAD
 
    - Contains the core functionality of student identity verification and behavior monitoring.
    - Developed using Python and organized into steps for incremental development.
@@ -32,20 +25,12 @@ The project is divided into two main parts:
 2. **Frontend Project** (React-based UI):
    - A user interface for registering students, displaying their information, and handling image uploads.
    - Integrated with the API to facilitate seamless communication between frontend and backend.
-=======
-    - Contains the core functionality of student identity verification and behavior monitoring.
-    - Developed using Python and organized into steps for incremental development.
-  
-2. **Mock Project** (Frontend with Virtual Database):
-    - Contains a mock frontend with virtual data for testing and experimenting during development.
->>>>>>> 0fe5d27 (create readme.me file)
 
 ### Directory Structure
 
 ```bash
 AI-proctoreye/
 │
-<<<<<<< HEAD
 ├── api/  # Core system and API
 |   ├── databse/
 |   ├── routes/
@@ -63,27 +48,12 @@ AI-proctoreye/
 |   |   |   ├── AddStudent.js
 |   |   |   └── StudentList.js
 |   |   |   └── ...
-=======
-├── api/                    # Core system and API
-│   ├── models/             # Core classes (Student, ImageProcessor, etc.)
-│   ├── services/           # Services for identity and behavior analysis
-│   ├── controllers/        # API controllers for handling requests
-│   ├── utils/              # Utility functions (database, image handling)
-│   ├── api_server.py       # API server entry point
-│   └── requirements.txt    # Dependencies for the project
-│
-├── frontend/               # Mock project for UI and testing
-│   ├── mock_db/            # Mock database for testing
-│   ├── ui/                 # Frontend HTML/CSS files
-│   └── app.js              # Frontend logic
->>>>>>> 0fe5d27 (create readme.me file)
 │
 └── README.md               # Project documentation
 ```
 
 ## Installation
 
-<<<<<<< HEAD
 1. **Clone the Repository**:
 
    ```bash
@@ -162,35 +132,6 @@ AI-proctoreye/
    This will start the React development server on `http://localhost:3000`.
 
    - Open your browser and go to `http://localhost:3000` to access the frontend interface where you can add new students, view the student list, and interact with the backend API.
-=======
-1. Clone the repository:
-
-```bash
-git clone https://github.com/abdulrahmanRadan/AI-proctoreye.git
-```
-
-2. Navigate to the project directory:
-
-```bash
-cd AI-proctoreye
-```
-
-3. Install Python dependencies:
-
-```bash
-pip install -r api/requirements.txt
-```
-
-## Usage
-
-1. Run the API server:
-
-```bash
-python api/api_server.py
-```
-
-2. Access the mock frontend to test the system's features during development.
->>>>>>> 0fe5d27 (create readme.me file)
 
 ## Development Steps
 
@@ -198,7 +139,6 @@ python api/api_server.py
 2. **Step 2**: Identify the student by comparing their image with all students stored in the database, starting with those taking the exam at the same time.
 3. **Step 3**: Verify the student is seated in the correct location by matching their image with the expected student for that seat.
 4. **Step 4**: Monitor student behavior and detect cheating during the exam.
-<<<<<<< HEAD
 5. **Step 5**: Add frontend functionality for registering students with their images and details.
 
 ## Error Handling and API Updates
@@ -215,8 +155,6 @@ If the API encounters an error such as "No face detected in the image", the fron
 ```plaintext
 Error: No face detected in the image
 ```
-=======
->>>>>>> 0fe5d27 (create readme.me file)
 
 ## Future Improvements
 
@@ -224,7 +162,6 @@ Error: No face detected in the image
 - Add scalability to handle larger datasets and more students efficiently.
 - Integrate with external exam management systems for seamless operation.
 
-<<<<<<< HEAD
 ## Contributing
 
 We welcome contributions to enhance the project! Please follow these steps:
@@ -267,8 +204,6 @@ To maintain a clean and organized repository, the following items are included i
 - Mock databases used for testing
 - Node.js dependencies (if frontend uses Node.js)
 
-=======
->>>>>>> 0fe5d27 (create readme.me file)
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

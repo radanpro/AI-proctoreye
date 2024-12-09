@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Form, File, UploadFile
+from fastapi import APIRouter, Form, File, UploadFile, Response, HTTPException
 from fastapi.responses import JSONResponse
 import numpy as np
 import cv2
 import os
+import json
 from datetime import datetime
 from services_v2.embedding_storage import EmbeddingStorage
 from services_v2.identity_verifier import IdentityVerifier
@@ -10,11 +11,28 @@ from services_v2.embedding_generator import EmbeddingGenerator
 from database.database_manager import DatabaseManager
 from deepface import DeepFace
 
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+
 from services.image_comparer import ImageComparer  # تأكد من أنك قد أنشأت هذه الخدمة بشكل صحيح
 import face_recognition
 
 
 router = APIRouter()
+
+def send_exam_status_to_api(student, next_exam_date, message, status_code=403):
+    content={
+        "status": "error",
+        "message":message,
+        "student_data":{
+            "name":student[1],
+            "registration_number":student[2],
+            "college":student[3],
+            "level":student[4],
+            "specialization":student[5],
+        },
+        "next_exam_date":next_exam_date,
+    }
+    return Response(content=json.dumps(content), media_type="application/json", status_code=status_code)
 
 @router.post("/compare_image_deepface")
 async def compare_image(registration_number: str = Form(...), captured_image: UploadFile = File(...)):
@@ -23,7 +41,6 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
     identity_verifier = IdentityVerifier()
     embedding_generator = EmbeddingGenerator()
     try:
-        
         db_manager = DatabaseManager()
         db_manager.connect()
         db_manager.create_tables()
@@ -31,9 +48,8 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
         student_data = db_manager.student_db.find(Number=registration_number)
         if not student_data:
             db_manager.close()
-            return JSONResponse(
-                content={"status": "error", "message": "Student not found."},
-                status_code=404,
+            return Response(
+                content=json.dumps({"status": "error", "message": "Student not found."}),media_type="application/json",status_code=404
             )
         student = student_data[0]  # بيانات الطالب
         student_college = student[3]  # الكلية
@@ -63,13 +79,7 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
             next_exam_date = min([exam[1] for exam in upcoming_exam]) if upcoming_exam else "No upcoming exams"
             db_manager.close()
             print("next_exam_date",next_exam_date)
-            return JSONResponse(
-                content={
-                    "status": "error",
-                    "message": f"Today is not the exam date. Next exam is on {next_exam_date}.",
-                },
-                status_code=403,
-            )
+            return send_exam_status_to_api(student, next_exam_date, f"Today is not the exam date. Next exam is on {next_exam_date}.", 403)
         
         # for exam in exam_data:
         #     print(f"Exam found: {exam}")
@@ -92,6 +102,13 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
                 content={
                     "status": "error",
                     "message": "No embedding found for the student.",
+                    "student_data":{
+                        "name":student[1],
+                        "registration_number":student[2],
+                        "college":student[3],
+                        "level":student[4],
+                        "specialization":student[5],
+                    },
                 },
                 status_code=404,
             )
@@ -126,6 +143,13 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
                     "status": "success",
                     "message": "Student verified successfully.",
                     "similarity": similarity,
+                    "student_data":{
+                        "name":student[1],
+                        "registration_number":student[2],
+                        "college":student[3],
+                        "level":student[4],
+                        "specialization":student[5],
+                    },
                 },
                 status_code=200,
             )
@@ -135,6 +159,13 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
                 content={
                     "status": "error",
                     "message": "Student verification failed.",
+                    "student_data":{
+                        "name":student[1],
+                        "registration_number":student[2],
+                        "college":student[3],
+                        "level":student[4],
+                        "specialization":student[5],
+                    },
                     "similarity": similarity,
                 },
                 status_code=401,
@@ -187,13 +218,7 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
             next_exam_date = min([exam[1] for exam in upcoming_exam]) if upcoming_exam else "No upcoming exams"
             db_manager.close()
             print('next_exam_date', next_exam_date)
-            return JSONResponse(
-                content={
-                    "status": "error",
-                    "message": f"Today is not the exam date. Next exam is on {next_exam_date}.",
-                },
-                status_code=403,
-            )
+            return send_exam_status_to_api(student, next_exam_date, f"Today is not the exam date. Next exam is on {next_exam_date}.")
 
         # قراءة البيانات الخاصة بالصورة الملتقطة
         captured_image_data = np.frombuffer(await captured_image.read(), np.uint8)
@@ -210,6 +235,13 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
                 content={
                     "status": "error",
                     "message": "No embedding found for the student.",
+                    "student_data":{
+                        "name":student[1],
+                        "registration_number":student[2],
+                        "college":student[3],
+                        "level":student[4],
+                        "specialization":student[5],
+                    },
                 },
                 status_code=404,
             )
@@ -239,6 +271,13 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
                 content={
                     "status": "success",
                     "message": "Student verified successfully.",
+                    "student_data":{
+                        "name":student[1],
+                        "registration_number":student[2],
+                        "college":student[3],
+                        "level":student[4],
+                        "specialization":student[5],
+                    },
                     "similarity": similarity,
                 },
                 status_code=200,
@@ -249,6 +288,13 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
                 content={
                     "status": "error",
                     "message": "Student verification failed.",
+                    "student_data":{
+                        "name":student[1],
+                        "registration_number":student[2],
+                        "college":student[3],
+                        "level":student[4],
+                        "specialization":student[5],
+                    },
                     "similarity": similarity,
                 },
                 status_code=401,
