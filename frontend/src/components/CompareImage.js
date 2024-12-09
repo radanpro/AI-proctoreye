@@ -188,24 +188,32 @@ const CompareImage = () => {
         </div>
       )}
       {student_data !== null && (
-        <div className="mt-4 p-4 bg-blue-100 border border-blue-500 rounded">
-          <h3 className="text-lg font-semibold">Name: {student_data.name}</h3>
-          <h3 className="text-lg font-semibold">
-            Registration Number: {student_data.registration_number}
-          </h3>
-          <h3 className="text-lg font-semibold">
-            College: {student_data.college}
-          </h3>
-          <h3 className="text-lg font-semibold">Level: {student_data.level}</h3>
-          <h3 className="text-lg font-semibold">
-            Specialization: {student_data.specialization}
-          </h3>
-          <h3 className="text-lg font-semibold">
-            Similarity: {similarity !== null ? similarity.toFixed(2) : "N/A"}%
-          </h3>
-          <h3 className="text-lg font-semibold">
-            Verified: {verified ? "Yes" : "No"}
-          </h3>
+        <div>
+          <div className="mt-4 p-4 bg-blue-100 border border-blue-500 rounded">
+            <h1 className="text-2xl font-semibold mt-[-30px] mr-[-20px] bg-white border border-gray-400  rounded-lg ">
+              {" "}
+              الطالب صاحب الصورة هو{" "}
+            </h1>
+            <h3 className="text-lg font-semibold">Name: {student_data.name}</h3>
+            <h3 className="text-lg font-semibold">
+              Registration Number: {student_data.registration_number}
+            </h3>
+            <h3 className="text-lg font-semibold">
+              College: {student_data.college}
+            </h3>
+            <h3 className="text-lg font-semibold">
+              Level: {student_data.level}
+            </h3>
+            <h3 className="text-lg font-semibold">
+              Specialization: {student_data.specialization}
+            </h3>
+            <h3 className="text-lg font-semibold">
+              Similarity: {similarity !== null ? similarity.toFixed(2) : "N/A"}%
+            </h3>
+            <h3 className="text-lg font-semibold">
+              Verified: {verified ? "Yes" : "No"}
+            </h3>
+          </div>
         </div>
       )}
     </div>

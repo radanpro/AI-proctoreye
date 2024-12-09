@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Form, File, UploadFile, Response, HTTPException
+from fastapi.responses import JSONResponse
 import numpy as np
 import cv2
 import os
@@ -9,6 +10,8 @@ from services_v2.identity_verifier import IdentityVerifier
 from services_v2.embedding_generator import EmbeddingGenerator
 from database.database_manager import DatabaseManager
 from deepface import DeepFace
+
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
 from services.image_comparer import ImageComparer  # تأكد من أنك قد أنشأت هذه الخدمة بشكل صحيح
 import face_recognition
@@ -99,6 +102,13 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
                 content={
                     "status": "error",
                     "message": "No embedding found for the student.",
+                    "student_data":{
+                        "name":student[1],
+                        "registration_number":student[2],
+                        "college":student[3],
+                        "level":student[4],
+                        "specialization":student[5],
+                    },
                 },
                 status_code=404,
             )
@@ -133,6 +143,13 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
                     "status": "success",
                     "message": "Student verified successfully.",
                     "similarity": similarity,
+                    "student_data":{
+                        "name":student[1],
+                        "registration_number":student[2],
+                        "college":student[3],
+                        "level":student[4],
+                        "specialization":student[5],
+                    },
                 },
                 status_code=200,
             )
@@ -142,6 +159,13 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
                 content={
                     "status": "error",
                     "message": "Student verification failed.",
+                    "student_data":{
+                        "name":student[1],
+                        "registration_number":student[2],
+                        "college":student[3],
+                        "level":student[4],
+                        "specialization":student[5],
+                    },
                     "similarity": similarity,
                 },
                 status_code=401,
@@ -211,6 +235,13 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
                 content={
                     "status": "error",
                     "message": "No embedding found for the student.",
+                    "student_data":{
+                        "name":student[1],
+                        "registration_number":student[2],
+                        "college":student[3],
+                        "level":student[4],
+                        "specialization":student[5],
+                    },
                 },
                 status_code=404,
             )
@@ -240,6 +271,13 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
                 content={
                     "status": "success",
                     "message": "Student verified successfully.",
+                    "student_data":{
+                        "name":student[1],
+                        "registration_number":student[2],
+                        "college":student[3],
+                        "level":student[4],
+                        "specialization":student[5],
+                    },
                     "similarity": similarity,
                 },
                 status_code=200,
@@ -250,6 +288,13 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
                 content={
                     "status": "error",
                     "message": "Student verification failed.",
+                    "student_data":{
+                        "name":student[1],
+                        "registration_number":student[2],
+                        "college":student[3],
+                        "level":student[4],
+                        "specialization":student[5],
+                    },
                     "similarity": similarity,
                 },
                 status_code=401,

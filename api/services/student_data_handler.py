@@ -1,4 +1,5 @@
 import os
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from database.database_manager import DatabaseManager
 
 class StudentDataHandler:
