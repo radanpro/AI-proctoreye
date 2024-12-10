@@ -8,8 +8,10 @@ from datetime import datetime
 from services_v2.embedding_storage import EmbeddingStorage
 from services_v2.identity_verifier import IdentityVerifier
 from services_v2.embedding_generator import EmbeddingGenerator
+from services_v2.identity_recognizer import FiassEmbeddingSearch
 from database.database_manager import DatabaseManager
 from deepface import DeepFace
+
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 
@@ -306,3 +308,65 @@ async def compare_image(registration_number: str = Form(...), captured_image: Up
             content={"status": "error", "message": f"Error occurred: {str(e)}"},
             status_code=500,
         )
+
+@router.post("/search_image")
+async def search_image(captured_image:UploadFile = File(...)):
+    print("captured_image")
+    # تهيئة الكلاسات
+    embedding_storage = EmbeddingStorage()
+    embedding_generator = EmbeddingGenerator()
+    fiass_embedding_search = FiassEmbeddingSearch(embedding_storage)
+    try:
+        print('caputred_image_data ss')
+        search_image_data = np.frombuffer(await captured_image.read(), np.uint8)
+        search_image_array = cv2.imdecode(search_image_data,cv2.IMREAD_COLOR)
+
+        # print("search_image_array",search_image_array)
+        if search_image_array is None:
+            raise HTTPException(status_code=400, detail="Invalid image file.")
+
+        # حفظ الصورة مؤقتًا لتوليد الـ embedding
+        temp_image_path = "temp_search_image.jpg"
+        cv2.imwrite(temp_image_path, search_image_array)
+        # print("temp_image_path",temp_image_path)
+
+        # توليد الـ embedding للصورة الملتقطة
+        captured_embedding = embedding_generator.generate_embedding(temp_image_path)
+        # print('captured_embedding',captured_embedding)
+        os.remove(temp_image_path)
+
+        if not captured_embedding:
+            return JSONResponse(
+                content={"status": "error", "message":"Failed to generate embedding."},
+                status_code=500,
+            )
+        
+        # print("captured_embedding",captured_embedding)
+        # تحميل جميع الـ embeddings إلى Fiass
+        fiass_embedding_search.load_embeddings()
+
+        print("captured_embedding")
+        # البحث عن أقرب Embedding
+        search_results = fiass_embedding_search.search(captured_embedding, top_k=1)
+        print("search_results", search_results)
+
+        if not search_results:
+            return JSONResponse(
+                content={"status":"error", "message":"No matching embedding found."},
+                status_code=404,
+            )
+
+        # إعداد النتيجة النهائية
+        retult = {
+            "status":"success",
+            "registration_number": search_results[0][0],
+            "distance": search_results[0][1],
+        }
+        return JSONResponse(content=retult, status_code=200)
+
+    except Exception as e:
+        return JSONResponse(
+            content={"status":"error", "message":str(e)},
+            status_code=500,
+        )
+

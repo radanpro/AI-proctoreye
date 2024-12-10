@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import AddStudent from "./students/AddStudent";
 import StudentList from "./students/StudentList";
 import CompareImage from "./components/CompareImage";
+import SearchImage from "./components/SearchImage";
 
 function Home() {
   return <h1>Welcome to Home Page</h1>;
@@ -40,6 +41,14 @@ function App() {
                 Compare Image
               </Link>
             </li>
+            <li>
+              <Link
+                to="/search-image"
+                className="text-white hover:text-gray-400"
+              >
+                Search Image
+              </Link>
+            </li>
           </ul>
         </nav>
         <div className="p-4">
@@ -48,6 +57,7 @@ function App() {
             <Route path="/add-student" element={<AddStudent />} />
             <Route path="/students" element={<StudentList />} />
             <Route path="/compare-image" element={<CompareImage />} />
+            <Route path="/search-image" element={<SearchImage />} />
           </Routes>
         </div>
       </div>
