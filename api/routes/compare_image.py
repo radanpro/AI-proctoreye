@@ -13,8 +13,6 @@ from database.database_manager import DatabaseManager
 from deepface import DeepFace
 
 
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-
 from services.image_comparer import ImageComparer  # تأكد من أنك قد أنشأت هذه الخدمة بشكل صحيح
 import face_recognition
 
@@ -357,12 +355,15 @@ async def search_image(captured_image:UploadFile = File(...)):
             )
 
         # إعداد النتيجة النهائية
+        print(search_results[0][0])
         retult = {
             "status":"success",
             "registration_number": search_results[0][0],
-            "distance": search_results[0][1],
+            "distance": float(search_results[0][1]),
         }
-        return JSONResponse(content=retult, status_code=200)
+        print('hello')
+
+        return Response(content=json.dumps(retult), media_type="application/json", status_code=200)
 
     except Exception as e:
         return JSONResponse(

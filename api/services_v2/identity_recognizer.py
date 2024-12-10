@@ -10,7 +10,7 @@ class FiassEmbeddingSearch:
         """
         self.embedding_storage = embedding_storage
         self.index = None
-        self.registration_numbers = []  # إصلاح خطأ الأقواس
+        self.registration_numbers = []
 
     def load_embeddings(self):
         """
@@ -19,18 +19,32 @@ class FiassEmbeddingSearch:
         data = self.embedding_storage.load_all_embeddings()
         if not data:
             raise ValueError("No embeddings found in storage.")
-        # print("data",data)
+
         embeddings = []
         self.registration_numbers = []
-        for reg_num, embedding in data.items():  # إصلاح مشكلة النقطتين
-            print(type(embedding))
-            self.registration_numbers.append(reg_num)
-            embeddings.append(np.array(embedding, dtype=np.float32))
-            print("reg_num",reg_num)
-            print("embedding",embedding)
+        for reg_num, records in data.items():
+            for record in records:
+                embedding = record.get("embedding")
+                # print("embedding",embedding)
+                if embedding is None:
+                    continue
 
+                # Convert to numpy array of type float32
+                embedding = np.array(embedding, dtype=np.float32)
+
+                # Ensure the embedding has the correct shape
+                if len(embedding.shape) != 1:
+                    raise ValueError(f"Embedding for {reg_num} is not a 1D vector.")
+
+                self.registration_numbers.append(reg_num)
+                embeddings.append(embedding)
+
+        if len(embeddings) == 0:
+            raise ValueError("No valid embeddings found.")
+
+        # Stack embeddings and create the Faiss index
         embeddings = np.vstack(embeddings)
-        self.index = faiss.IndexFlatL2(embeddings.shape[1])  # تأكد من استخدام النوع الصحيح
+        self.index = faiss.IndexFlatL2(embeddings.shape[1])
         self.index.add(embeddings)
 
     def search(self, query_embedding, top_k=1):
@@ -40,13 +54,29 @@ class FiassEmbeddingSearch:
         :param top_k: The number of closest matches to return.
         :return: List of (registration_number, distance) tuples.
         """
-        if self.index is None:  # إصلاح خطأ "slef"
+        if self.index is None:
             raise ValueError("Faiss index is not initialized. Call load_embeddings() first.")
 
-        query_embedding = np.array(query_embedding, dtype=np.float32).reshape(1, -1)
+        # print("query_embedding",query_embedding)
+        # تأكد أن query_embedding هو فقط جزء من القاموس الذي يحتوي على 'embedding'
+        if isinstance(query_embedding, list) and len(query_embedding) == 1 and isinstance(query_embedding[0], dict):
+            query_embedding = query_embedding[0].get('embedding')
+            if query_embedding is None:
+                raise ValueError("No embedding found in the provided query data.")
+
+        # التأكد من أن query_embedding هو مصفوفة numpy من نوع float32
+        query_embedding = np.array(query_embedding, dtype=np.float32)
+
+        # تأكد أن الـ query_embedding هو 1D (مصفوفة أحادية البُعد)
+        if query_embedding.ndim != 1:
+            raise ValueError("query_embedding يجب أن يكون مصفوفة أحادية البُعد.")
+
+        # إعادة تشكيل query_embedding ليصبح (1, -1)
+        query_embedding = query_embedding.reshape(1, -1)
+
         distances, indices = self.index.search(query_embedding, top_k)
 
-        results = []  # إصلاح خطأ الإملاء "resluts"
+        results = []
         for dist, idx in zip(distances[0], indices[0]):
             if idx == -1:
                 continue

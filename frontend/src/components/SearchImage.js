@@ -5,6 +5,7 @@ import CameraCapture from "./CameraCapture";
 const SearchImage = () => {
   const [capturedImage, setCapturedImage] = useState(null);
   const [similarity, setSimilarity] = useState(null);
+  const [distance, setDistance] = useState(null);
   const [verified, setVerified] = useState(null);
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -41,8 +42,10 @@ const SearchImage = () => {
       );
 
       if (response.data.status === "success") {
-        setMessage(response.data.message);
-        setSimilarity(response.data.similarity || null);
+        console.log(response.data);
+        console.log(typeof response.data.distance);
+        setMessage(response.data.registration_number);
+        setDistance(response.data.distance || 0);
         setVerified(true);
       } else if (response.data.status === "error") {
         setMessage(response.data.message);
@@ -119,6 +122,19 @@ const SearchImage = () => {
           }`}
         >
           <h3 className="text-lg font-semibold">{message}</h3>
+        </div>
+      )}
+
+      {distance !== null && (
+        <div
+          className={`mt-4 p-4 rounded ${
+            verified ? "bg-green-100" : "bg-red-100"
+          }`}
+        >
+          <h3 className="text-lg font-semibold">
+            {" "}
+            distance : {distance ?? "0"}
+          </h3>
         </div>
       )}
 
