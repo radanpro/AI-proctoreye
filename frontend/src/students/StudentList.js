@@ -10,6 +10,7 @@ const StudentList = () => {
   const fetchStudents = async () => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/api/students");
+      // console.log(response.data);
       setStudents(response.data);
     } catch (error) {
       console.error("Failed to fetch students", error);
@@ -47,18 +48,18 @@ const StudentList = () => {
       <ul className="space-y-4">
         {students.map((student) => (
           <li
-            key={student.number}
+            key={student.StudentID}
             className="p-4 border-b border-gray-200 flex items-start"
           >
             <img
               src={student.ImagePath}
-              alt={student.StudentName}
+              alt={student.Number}
               className="w-16 h-16 rounded-full mr-4"
             />
             <div>
-              <p className="font-semibold">{student.StudentName}</p>
+              {/* <p className="font-semibold">{student.StudentID}</p> */}
               <p>
-                <strong>Number:</strong> {student.number}
+                <strong>Number:</strong> {student.Number}
               </p>
               <p>
                 <strong>College:</strong> {student.College}

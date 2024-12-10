@@ -47,7 +47,7 @@ class FiassEmbeddingSearch:
         self.index = faiss.IndexFlatL2(embeddings.shape[1])
         self.index.add(embeddings)
 
-    def search(self, query_embedding, top_k=10, threshold=10.0):
+    def search(self, query_embedding, top_k=10, threshold=50.0):
         """
         Searches for the closest match to the given embedding.
         :param query_embedding: The embedding vector to search for.
