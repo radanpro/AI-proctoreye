@@ -47,7 +47,7 @@ class FiassEmbeddingSearch:
         self.index = faiss.IndexFlatL2(embeddings.shape[1])
         self.index.add(embeddings)
 
-    def search(self, query_embedding, top_k=1):
+    def search(self, query_embedding, top_k=10, threshold=10.0):
         """
         Searches for the closest match to the given embedding.
         :param query_embedding: The embedding vector to search for.
@@ -58,7 +58,8 @@ class FiassEmbeddingSearch:
             raise ValueError("Faiss index is not initialized. Call load_embeddings() first.")
 
         # print("query_embedding",query_embedding)
-        # تأكد أن query_embedding هو فقط جزء من القاموس الذي يحتوي على 'embedding'
+        
+        # Check and extract 'embedding' if query_embedding is wrapped in a list/dict
         if isinstance(query_embedding, list) and len(query_embedding) == 1 and isinstance(query_embedding[0], dict):
             query_embedding = query_embedding[0].get('embedding')
             if query_embedding is None:
@@ -67,19 +68,21 @@ class FiassEmbeddingSearch:
         # التأكد من أن query_embedding هو مصفوفة numpy من نوع float32
         query_embedding = np.array(query_embedding, dtype=np.float32)
 
-        # تأكد أن الـ query_embedding هو 1D (مصفوفة أحادية البُعد)
+        # Ensure query_embedding is a 1D vector
         if query_embedding.ndim != 1:
-            raise ValueError("query_embedding يجب أن يكون مصفوفة أحادية البُعد.")
+            raise ValueError("query_embedding must be a 1D vector.")
 
-        # إعادة تشكيل query_embedding ليصبح (1, -1)
+        # Reshape query_embedding to (1, -1) for compatibility with Faiss
         query_embedding = query_embedding.reshape(1, -1)
 
+        # Perform the search
         distances, indices = self.index.search(query_embedding, top_k)
 
         results = []
         for dist, idx in zip(distances[0], indices[0]):
             if idx == -1:
                 continue
-            results.append((self.registration_numbers[idx], dist))
+            if dist <= threshold:
+                results.append((self.registration_numbers[idx], dist))
 
         return results

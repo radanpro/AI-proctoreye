@@ -50,7 +50,7 @@ class FaceDetector:
             default=0,
         )
         file_name = f"face{max_index + 1}.jpg"
-        file_path = os.path.join(floderm file_name)
+        file_path = os.path.join(folder, file_name)
 
         # Save the Image
         cv2.imwrite(file_path, cropped_face)

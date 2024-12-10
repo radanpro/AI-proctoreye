@@ -342,10 +342,10 @@ async def search_image(captured_image:UploadFile = File(...)):
         # print("captured_embedding",captured_embedding)
         # تحميل جميع الـ embeddings إلى Fiass
         fiass_embedding_search.load_embeddings()
-
+        
         print("captured_embedding")
         # البحث عن أقرب Embedding
-        search_results = fiass_embedding_search.search(captured_embedding, top_k=1)
+        search_results = fiass_embedding_search.search(captured_embedding, top_k=10)
         print("search_results", search_results)
 
         if not search_results:
@@ -356,10 +356,15 @@ async def search_image(captured_image:UploadFile = File(...)):
 
         # إعداد النتيجة النهائية
         print(search_results[0][0])
+        
         retult = {
-            "status":"success",
-            "registration_number": search_results[0][0],
-            "distance": float(search_results[0][1]),
+            "status": "success",
+            "data": [
+                {
+                    "registration_number": entry[0],
+                    "distance": float(entry[1])
+                } for entry in search_results
+            ]
         }
         print('hello')
 

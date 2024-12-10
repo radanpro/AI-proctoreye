@@ -4,10 +4,7 @@ import CameraCapture from "./CameraCapture";
 
 const SearchImage = () => {
   const [capturedImage, setCapturedImage] = useState(null);
-  const [similarity, setSimilarity] = useState(null);
-  const [distance, setDistance] = useState(null);
-  const [verified, setVerified] = useState(null);
-  const [message, setMessage] = useState(null);
+  const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [useCamera, setUseCamera] = useState(false);
   const [error, setError] = useState("");
@@ -23,9 +20,7 @@ const SearchImage = () => {
 
     setError("");
     setLoading(true);
-    setSimilarity(null);
-    setVerified(null);
-    setMessage(null);
+    setResults([]);
 
     const formData = new FormData();
     formData.append("captured_image", capturedImage);
@@ -42,14 +37,9 @@ const SearchImage = () => {
       );
 
       if (response.data.status === "success") {
-        console.log(response.data);
-        console.log(typeof response.data.distance);
-        setMessage(response.data.registration_number);
-        setDistance(response.data.distance || 0);
-        setVerified(true);
+        setResults(response.data.data); // Handle all results
       } else if (response.data.status === "error") {
-        setMessage(response.data.message);
-        setVerified(false);
+        setError(response.data.message);
       }
     } catch (error) {
       if (error.response) {
@@ -115,37 +105,20 @@ const SearchImage = () => {
         </button>
       </form>
 
-      {message && (
-        <div
-          className={`mt-4 p-4 rounded ${
-            verified ? "bg-green-100" : "bg-red-100"
-          }`}
-        >
-          <h3 className="text-lg font-semibold">{message}</h3>
-        </div>
-      )}
-
-      {distance !== null && (
-        <div
-          className={`mt-4 p-4 rounded ${
-            verified ? "bg-green-100" : "bg-red-100"
-          }`}
-        >
-          <h3 className="text-lg font-semibold">
-            {" "}
-            distance : {distance ?? "0"}
-          </h3>
-        </div>
-      )}
-
-      {similarity !== null && (
-        <div className="mt-4 p-4 bg-blue-100 border border-blue-500 rounded">
-          <h3 className="text-lg font-semibold">
-            Similarity: {similarity.toFixed(2)}%
-          </h3>
-          <h3 className="text-lg font-semibold">
-            Verified: {verified ? "Yes" : "No"}
-          </h3>
+      {results.length > 0 && (
+        <div className="mt-4">
+          {results.map((result, index) => (
+            <div
+              key={index}
+              className="p-4 mb-2 bg-blue-100 border border-blue-500 rounded"
+            >
+              <h3 className="text-lg font-semibold">
+                رقم التسجيل: {result.registration_number}
+              </h3>
+              <h4 className="text-sm">المسافة:</h4>
+              <p className="text-sm">distance: {result.distance}</p>
+            </div>
+          ))}
         </div>
       )}
     </div>

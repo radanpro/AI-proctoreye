@@ -41,11 +41,11 @@ async def add_student(
         image_extension = os.path.splitext(image_file.filename)[1]
         image_path = f"images/{number}{image_extension}"
         cv2.imwrite(image_path, image)
-
         # إنشاء التمثيل المدمج (Embedding)
         embedding = embedding_generator.generate_embedding(image_path)
-        
+        print("hello")
         if embedding is None:
+            print("hello agan")
             raise HTTPException(status_code=400, detail="Failed to generate embedding for the uploaded image.")
         
         # حفظ الـ Embedding في ملف JSON
