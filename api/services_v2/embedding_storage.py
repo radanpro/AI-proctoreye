@@ -45,3 +45,15 @@ class EmbeddingStorage:
         except Exception as e:
             print(f"Error retrieving embedding: {e}")
             return None
+    def load_all_embeddings(self):
+        """
+        Loads all embeddings from the storage.
+        :return: Dictionary containing all registration numbers and their embeddings, or an empty dictionary if there's an error.
+        """
+        try:
+            with open(self.storage_path, 'r') as file:
+                data = json.load(file)
+            return data
+        except Exception as e:
+            print(f"Error loading all embeddings: {e}")
+            return {}
