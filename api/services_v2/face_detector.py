@@ -33,4 +33,25 @@ class FaceDetector:
         cropped_face = image[y:y + h, x:x + w]
         return cropped_face
     
-    
+    def save_cropped_face(self, cropped_face):
+        """
+        Saves the cropped face to the faces/directory with a sequential filename.
+        :param cropped_face: The cropped face image as a numpy array.
+        :return: The path of the saved face image.
+        """
+        folder = "faces"
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        
+        # Specify the serial name of the file
+        existing_files = os.listdir(folder)
+        max_index = max(
+            [int(f.split("face")[1].split(".")[0]) for f in existing_files if f.startswith("face") and f.endswith(".jpg")],
+            default=0,
+        )
+        file_name = f"face{max_index + 1}.jpg"
+        file_path = os.path.join(floderm file_name)
+
+        # Save the Image
+        cv2.imwrite(file_path, cropped_face)
+        return file_path
