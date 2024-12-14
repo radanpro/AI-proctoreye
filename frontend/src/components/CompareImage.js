@@ -189,10 +189,10 @@ const CompareImage = () => {
       )}
       {student_data !== null && (
         <div>
-          <div className="mt-4 p-4 bg-blue-100 border border-blue-500 rounded">
-            <h1 className="text-2xl font-semibold mt-[-30px] mr-[-20px] bg-white border border-gray-400  rounded-lg ">
+          <div className="mt-6 p-4 bg-blue-100 border border-blue-500 rounded">
+            <h1 className="felx text-center p-2 text-2xl font-semibold mt-[-30px] bg-white border border-gray-400  rounded-lg ">
               {" "}
-              الطالب صاحب الصورة هو{" "}
+              الطالب صاحب رقم القيد هو{" "}
             </h1>
             <h3 className="text-lg font-semibold">Name: {student_data.name}</h3>
             <h3 className="text-lg font-semibold">
