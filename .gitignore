@@ -56,3 +56,4 @@ readformy.md
 
 # Ignore SQLite database file
 *.db
+models
