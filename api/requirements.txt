@@ -12,3 +12,4 @@ deepface
 scipy
 faiss
 python-multipart
+requests==2.27.1
