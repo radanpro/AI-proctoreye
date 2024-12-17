@@ -13,7 +13,6 @@ from database.database_manager import DatabaseManager
 from deepface import DeepFace
 
 
-from services.image_comparer import ImageComparer  # تأكد من أنك قد أنشأت هذه الخدمة بشكل صحيح
 import face_recognition
 
 
