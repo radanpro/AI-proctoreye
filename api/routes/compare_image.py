@@ -11,6 +11,8 @@ from services_v2.embedding_generator import EmbeddingGenerator
 from services_v2.identity_recognizer import FiassEmbeddingSearch
 from database.database_manager import DatabaseManager
 from deepface import DeepFace
+from io import BytesIO
+import base64 
 
 
 import face_recognition
@@ -375,3 +377,42 @@ async def search_image(captured_image:UploadFile = File(...)):
             status_code=500,
         )
 
+
+@router.post('/detect_face')
+async def detect_face(image: UploadFile = File(...)):
+    print("image")
+    image_data = await image.read()
+    search_image = np.frombuffer(image_data, np.uint8)
+    search_image_array = cv2.imdecode(search_image, cv2.IMREAD_COLOR)
+    
+    if search_image_array is not None:
+        # معالجة الصورة (اكتشاف الوجوه والتعرف عليها، إلخ)
+        result = process_face(search_image_array)
+        return JSONResponse(content={"status": "success", "faceData": result}, status_code=200)
+    else:
+        return JSONResponse(content={"status": "error", "message": "No image provided"}, status_code=500)
+
+def process_face(image_data):
+    # محاكاة عملية الكشف عن الوجه
+    face_coordinates = [{"x": 100, "y": 150}, {"x": 200, "y": 150}]  # نقاط الوجه مثال
+    name = "John Doe"  # اسم الشخص الذي تم التعرف عليه
+
+    # تحديد موقع النص (الاسم) فوق الوجه
+    name_position = {"x": 120, "y": 120}
+
+    # إضافة النص (اسم الشخص) فوق الصورة
+    image_with_text = image_data.copy()
+    cv2.putText(image_with_text, name, (name_position["x"], name_position["y"]),
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+    # تحويل الصورة المعدلة إلى صيغة يمكن إرسالها عبر API (مثل JPEG أو PNG)
+    _, buffer = cv2.imencode('.jpg', image_with_text)
+    image_bytes = buffer.tobytes()
+
+    # إعادة الصورة المعدلة مع البيانات الأخرى
+    return {
+        "points": face_coordinates,  # نقاط الوجه
+        "name": name,  # اسم الشخص
+        "namePosition": name_position,  # موقع الاسم
+        "imageUrl": "data:image/jpeg;base64," + base64.b64encode(image_bytes).decode('utf-8')  # صورة معدلة بصيغة Base64
+    }

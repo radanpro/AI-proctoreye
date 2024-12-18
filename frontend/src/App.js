@@ -4,6 +4,7 @@ import AddStudent from "./students/AddStudent";
 import StudentList from "./students/StudentList";
 import CompareImage from "./components/CompareImage";
 import SearchImage from "./components/SearchImage";
+import CameraCapture from "./components/CameraCapture";
 
 function Home() {
   return <h1>Welcome to Home Page</h1>;
@@ -49,6 +50,11 @@ function App() {
                 Search Image
               </Link>
             </li>
+            <li>
+              <Link to="/camera" className="text-white hover:text-gray-400">
+                Real Time
+              </Link>
+            </li>
           </ul>
         </nav>
         <div className="p-4">
@@ -57,6 +63,10 @@ function App() {
             <Route path="/add-student" element={<AddStudent />} />
             <Route path="/students" element={<StudentList />} />
             <Route path="/compare-image" element={<CompareImage />} />
+            <Route
+              path="/camera"
+              element={<CameraCapture setCapturedImage={() => {}} />}
+            />
             <Route path="/search-image" element={<SearchImage />} />
           </Routes>
         </div>

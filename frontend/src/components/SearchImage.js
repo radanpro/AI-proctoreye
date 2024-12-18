@@ -1,12 +1,11 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
-import CameraCapture from "./CameraCapture";
+import { Link } from "react-router-dom";
 
 const SearchImage = () => {
   const [capturedImage, setCapturedImage] = useState(null);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [useCamera, setUseCamera] = useState(false);
   const [error, setError] = useState("");
   const fileInputRef = useRef(null);
 
@@ -67,34 +66,25 @@ const SearchImage = () => {
         <div className="flex gap-4">
           <button
             type="button"
-            onClick={() => setUseCamera(false)}
-            className={`w-1/2 p-2 rounded ${
-              !useCamera ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
+            className="w-1/2 p-2 rounded bg-blue-500 text-white"
           >
             اختر صورة
           </button>
-          <button
-            type="button"
-            onClick={() => setUseCamera(true)}
-            className={`w-1/2 p-2 rounded ${
-              useCamera ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
+
+          <Link
+            to="/camera"
+            className="w-1/2 p-2 rounded bg-blue-500 text-white"
           >
             فتح الكاميرا
-          </button>
+          </Link>
         </div>
 
-        {!useCamera && (
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={(e) => setCapturedImage(e.target.files[0])}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        )}
-
-        {useCamera && <CameraCapture setCapturedImage={setCapturedImage} />}
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={(e) => setCapturedImage(e.target.files[0])}
+          className="w-full p-2 border border-gray-300 rounded"
+        />
 
         <button
           type="submit"
