@@ -1,19 +1,21 @@
 import React, { useState, useRef, useCallback } from "react";
-import axios from "axios";
 
-const CameraCapture = () => {
+const CameraCaptureOnly = ({ setCapturedImage }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const [loading, setLoading] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
-  const [imageResults, setImageResults] = useState([]);
   const [flash, setFlash] = useState(false);
 
-  // بدء الكاميرا
+  // Start the camera
   const startCamera = () => {
     if (!cameraActive) {
       navigator.mediaDevices
-        .getUserMedia({ video: true })
+        .getUserMedia({
+          video: {
+            width: { ideal: 1280 }, // العرض المثالي
+            height: { ideal: 720 }, // الارتفاع المثالي
+          },
+        })
         .then((stream) => {
           videoRef.current.srcObject = stream;
           setCameraActive(true);
@@ -24,7 +26,7 @@ const CameraCapture = () => {
     }
   };
 
-  // إيقاف الكاميرا
+  // Stop the camera
   const stopCamera = () => {
     if (cameraActive) {
       const stream = videoRef.current.srcObject;
@@ -35,7 +37,7 @@ const CameraCapture = () => {
     }
   };
 
-  // دالة لالتقاط الصورة من الفيديو
+  // Capture image from video
   const captureImage = useCallback(() => {
     if (videoRef.current && canvasRef.current) {
       const ctx = canvasRef.current.getContext("2d");
@@ -52,47 +54,10 @@ const CameraCapture = () => {
       setFlash(true);
       setTimeout(() => setFlash(false), 300);
 
-      const byteString = atob(imageData.split(",")[1]);
-      const arrayBuffer = new ArrayBuffer(byteString.length);
-      const uintArray = new Uint8Array(arrayBuffer);
-      for (let i = 0; i < byteString.length; i++) {
-        uintArray[i] = byteString.charCodeAt(i);
-      }
-      const blob = new Blob([arrayBuffer], { type: "image/jpeg" });
-
-      sendImageToServer(blob);
+      // Pass the captured image to the parent component
+      setCapturedImage(imageData);
     }
-  }, []);
-
-  // إرسال الصورة إلى الخادم
-  const sendImageToServer = async (imageBlob) => {
-    const formData = new FormData();
-    formData.append("image", imageBlob, "image.jpg");
-
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/detect_face",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      if (response.data.status === "success") {
-        const faceData = response.data.faceData || {}; // التحقق من وجود faceData
-        setImageResults((prevResults) => [...prevResults, faceData]);
-      } else {
-        console.error("Face detection failed:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error in sending image:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [setCapturedImage]);
 
   return (
     <div
@@ -101,6 +66,7 @@ const CameraCapture = () => {
       <div className="mt-4">
         {!cameraActive ? (
           <button
+            type="button"
             onClick={startCamera}
             className="p-2 bg-green-500 text-white rounded"
           >
@@ -108,6 +74,7 @@ const CameraCapture = () => {
           </button>
         ) : (
           <button
+            type="button"
             onClick={stopCamera}
             className="p-2 bg-red-500 text-white rounded ml-4"
           >
@@ -118,6 +85,7 @@ const CameraCapture = () => {
 
       <div className="mt-4">
         <button
+          type="button"
           onClick={captureImage}
           className="p-2 bg-blue-500 text-white rounded"
         >
@@ -157,33 +125,9 @@ const CameraCapture = () => {
             }}
           ></div>
         )}
-
-        {loading && <p>جاري التحميل...</p>}
-      </div>
-
-      <div className="mt-4 flex">
-        {imageResults.length > 0 ? (
-          imageResults.map((result, index) => (
-            <div key={index}>
-              <h3>نتيجة {index + 1}</h3>
-              {result.imageUrl ? (
-                <img
-                  src={result.imageUrl}
-                  alt={`Result ${index + 1}`}
-                  width="200"
-                />
-              ) : (
-                <p>لا توجد صورة.</p>
-              )}
-              <p>{JSON.stringify(result)}</p>
-            </div>
-          ))
-        ) : (
-          <p>لا توجد نتائج بعد.</p>
-        )}
       </div>
     </div>
   );
 };
 
-export default CameraCapture;
+export default CameraCaptureOnly;

@@ -377,42 +377,96 @@ async def search_image(captured_image:UploadFile = File(...)):
             status_code=500,
         )
 
-
 @router.post('/detect_face')
 async def detect_face(image: UploadFile = File(...)):
-    print("image")
-    image_data = await image.read()
-    search_image = np.frombuffer(image_data, np.uint8)
-    search_image_array = cv2.imdecode(search_image, cv2.IMREAD_COLOR)
-    
-    if search_image_array is not None:
-        # معالجة الصورة (اكتشاف الوجوه والتعرف عليها، إلخ)
-        result = process_face(search_image_array)
-        return JSONResponse(content={"status": "success", "faceData": result}, status_code=200)
-    else:
-        return JSONResponse(content={"status": "error", "message": "No image provided"}, status_code=500)
+    try:
+        # قراءة بيانات الصورة
+        image_data = await image.read()
+        search_image = np.frombuffer(image_data, np.uint8)
+        search_image_array = cv2.imdecode(search_image, cv2.IMREAD_COLOR)
 
-def process_face(image_data):
-    # محاكاة عملية الكشف عن الوجه
-    face_coordinates = [{"x": 100, "y": 150}, {"x": 200, "y": 150}]  # نقاط الوجه مثال
-    name = "John Doe"  # اسم الشخص الذي تم التعرف عليه
+        if search_image_array is None:
+            raise HTTPException(status_code=400, detail="Invalid image file.")
 
-    # تحديد موقع النص (الاسم) فوق الوجه
-    name_position = {"x": 120, "y": 120}
+        # تهيئة الكلاسات (الكشف عن الهوية)
+        embedding_storage = EmbeddingStorage()
+        embedding_generator = EmbeddingGenerator()
+        fiass_embedding_search = FiassEmbeddingSearch(embedding_storage)
 
-    # إضافة النص (اسم الشخص) فوق الصورة
-    image_with_text = image_data.copy()
-    cv2.putText(image_with_text, name, (name_position["x"], name_position["y"]),
-                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        # حفظ الصورة مؤقتًا لتوليد الـ embedding
+        temp_image_path = "temp_search_image.jpg"
+        cv2.imwrite(temp_image_path, search_image_array)
 
-    # تحويل الصورة المعدلة إلى صيغة يمكن إرسالها عبر API (مثل JPEG أو PNG)
-    _, buffer = cv2.imencode('.jpg', image_with_text)
-    image_bytes = buffer.tobytes()
+        # توليد الـ embedding للصورة
+        captured_embedding = embedding_generator.generate_embedding(temp_image_path)
+        os.remove(temp_image_path)
 
-    # إعادة الصورة المعدلة مع البيانات الأخرى
-    return {
-        "points": face_coordinates,  # نقاط الوجه
-        "name": name,  # اسم الشخص
-        "namePosition": name_position,  # موقع الاسم
-        "imageUrl": "data:image/jpeg;base64," + base64.b64encode(image_bytes).decode('utf-8')  # صورة معدلة بصيغة Base64
-    }
+        if not captured_embedding:
+            return JSONResponse(
+                content={"status": "error", "message": "Failed to generate embedding."},
+                status_code=500,
+            )
+
+        # تحميل جميع الـ embeddings إلى Fiass
+        fiass_embedding_search.load_embeddings()
+
+        # البحث عن أقرب Embedding
+        search_results = fiass_embedding_search.search(captured_embedding, top_k=1)
+
+        if not search_results:
+            return JSONResponse(
+                content={"status": "error", "message": "No matching embedding found."},
+                status_code=404,
+            )
+
+        # الحصول على بيانات الشخص
+        person_data = search_results[0]
+        name = person_data[0]  # اسم الشخص
+
+        # تحديد نقاط الوجه
+        face_coordinates = detect_face_coordinates(search_image_array)
+
+        # إضافة النصوص والنقاط إلى الصورة
+        image_with_annotations = annotate_image(search_image_array, face_coordinates, name)
+
+        # تحويل الصورة المعدلة إلى Base64
+        _, buffer = cv2.imencode('.jpg', image_with_annotations)
+        image_bytes = buffer.tobytes()
+        image_base64 = base64.b64encode(image_bytes).decode('utf-8')
+        # print("image_base64",image_base64)
+        return JSONResponse(
+            content={
+                "status": "success",
+                "name": name,
+                "points": face_coordinates,
+                "image": f"data:image/jpeg;base64,{image_base64}",
+            },
+            status_code=200,
+        )
+
+    except Exception as e:
+        return JSONResponse(
+            content={"status": "error", "message": str(e)},
+            status_code=500,
+        )
+
+
+def detect_face_coordinates(image):
+
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    coordinates = [{"x": int(x), "y": int(y), "w": int(w), "h": int(h)} for (x, y, w, h) in faces]
+    return coordinates
+
+
+def annotate_image(image, face_coordinates, name):
+    annotated_image = image.copy()
+    for face in face_coordinates:
+        x, y, w, h = face["x"], face["y"], face["w"], face["h"]
+        # رسم مستطيل حول الوجه
+        cv2.rectangle(annotated_image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+        # إضافة الاسم فوق الوجه
+        cv2.putText(annotated_image, name, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
+
+    return annotated_image

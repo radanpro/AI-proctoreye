@@ -27,8 +27,9 @@ async def add_student(
     specialization: str = Form(...),
     image_file: UploadFile = File(...)
     ):
+    # print(f"Received data: name={name}, number={number}, image_array={image_file.filename}")
     try:
-        print(f"Received data: name={name}, number={number}, image_array={image_file.filename}")
+        # print(f"Received data: name={name}, number={number}, image_array={image_file.filename}")
         
         # قراءة البيانات من الملف وتحويلها إلى numpy array
         image_data = np.frombuffer(await image_file.read(), np.uint8)

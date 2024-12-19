@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import CameraCapture from "../components/CameraCapture";
+import CameraCaptureOnly from "../components/CameraCaptureOnly";
 
 const AddStudent = () => {
   const [number, setRegistrationNumber] = useState("");
@@ -36,7 +36,6 @@ const AddStudent = () => {
         },
       });
 
-      // الانتقال إلى صفحة قائمة الطلاب عند نجاح الإضافة
       navigate("/students", {
         state: { message: "Student added successfully!" },
       });
@@ -52,6 +51,25 @@ const AddStudent = () => {
   const handleCameraToggle = () => {
     setUseCamera(!useCamera);
     setImage(null); // إعادة تعيين الصورة عند تغيير الخيار
+  };
+
+  const handleCapturedImage = (capturedData) => {
+    // التحقق مما إذا كانت البيانات Base64 وتحويلها إلى ملف
+    if (capturedData.startsWith("data:image")) {
+      const byteString = atob(capturedData.split(",")[1]);
+      const mimeString = capturedData.split(",")[0].split(":")[1].split(";")[0];
+      const arrayBuffer = new Uint8Array(byteString.length);
+
+      for (let i = 0; i < byteString.length; i++) {
+        arrayBuffer[i] = byteString.charCodeAt(i);
+      }
+
+      const blob = new Blob([arrayBuffer], { type: mimeString });
+      const file = new File([blob], "captured_image.jpg", { type: mimeString });
+      setImage(file);
+    } else {
+      alert("Invalid image format received from the camera.");
+    }
   };
 
   return (
@@ -123,7 +141,9 @@ const AddStudent = () => {
           />
         )}
 
-        {useCamera && <CameraCapture setCapturedImage={setImage} />}
+        {useCamera && (
+          <CameraCaptureOnly setCapturedImage={handleCapturedImage} />
+        )}
 
         <button
           type="submit"

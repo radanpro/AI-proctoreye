@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
-import CameraCapture from "./CameraCapture";
+import CameraCaptureOnly from "./CameraCaptureOnly";
 
 const CompareImage = () => {
   const [registrationNumber, setRegistrationNumber] = useState("");
@@ -152,7 +152,7 @@ const CompareImage = () => {
           />
         )}
 
-        {useCamera && <CameraCapture setCapturedImage={setCapturedImage} />}
+        {useCamera && <CameraCaptureOnly setCapturedImage={setCapturedImage} />}
 
         <button
           type="submit"
