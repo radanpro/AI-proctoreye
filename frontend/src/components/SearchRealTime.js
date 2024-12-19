@@ -1,19 +1,40 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import axios from "axios";
 
-const CameraCapture = () => {
+const SearchRealTime = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
   const [imageResults, setImageResults] = useState([]);
   const [flash, setFlash] = useState(false);
+  const [devices, setDevices] = useState([]); // قائمة الأجهزة
+  const [selectedDeviceId, setSelectedDeviceId] = useState(null); // الكاميرا المختارة
 
-  // بدء الكاميرا
+  // الحصول على قائمة الكاميرات المتاحة
+  useEffect(() => {
+    navigator.mediaDevices.enumerateDevices().then((deviceInfos) => {
+      const videoDevices = deviceInfos.filter(
+        (device) => device.kind === "videoinput"
+      );
+      setDevices(videoDevices);
+      if (videoDevices.length > 0) {
+        setSelectedDeviceId(videoDevices[0].deviceId); // افتراضيًا الكاميرا الأولى
+      }
+    });
+  }, []);
+
+  // بدء الكاميرا باستخدام الكاميرا المختارة
   const startCamera = () => {
-    if (!cameraActive) {
+    if (!cameraActive && selectedDeviceId) {
       navigator.mediaDevices
-        .getUserMedia({ video: true })
+        .getUserMedia({
+          video: {
+            deviceId: { exact: selectedDeviceId },
+            width: 1280,
+            height: 720,
+          },
+        })
         .then((stream) => {
           videoRef.current.srcObject = stream;
           setCameraActive(true);
@@ -38,16 +59,16 @@ const CameraCapture = () => {
   // دالة لالتقاط الصورة من الفيديو
   const captureImage = useCallback(() => {
     if (videoRef.current && canvasRef.current) {
-      const ctx = canvasRef.current.getContext("2d");
-      ctx.drawImage(
-        videoRef.current,
-        0,
-        0,
-        canvasRef.current.width,
-        canvasRef.current.height
-      );
+      const videoWidth = videoRef.current.videoWidth;
+      const videoHeight = videoRef.current.videoHeight;
 
-      const imageData = canvasRef.current.toDataURL("image/jpeg");
+      canvasRef.current.width = videoWidth;
+      canvasRef.current.height = videoHeight;
+
+      const ctx = canvasRef.current.getContext("2d");
+      ctx.drawImage(videoRef.current, 0, 0, videoWidth, videoHeight);
+
+      const imageData = canvasRef.current.toDataURL("image/jpeg", 1.0);
 
       setFlash(true);
       setTimeout(() => setFlash(false), 300);
@@ -82,7 +103,7 @@ const CameraCapture = () => {
       );
 
       if (response.data.status === "success") {
-        const faceData = response.data.faceData || {}; // التحقق من وجود faceData
+        const faceData = response.data.faceData || {};
         setImageResults((prevResults) => [...prevResults, faceData]);
       } else {
         console.error("Face detection failed:", response.data.message);
@@ -98,6 +119,25 @@ const CameraCapture = () => {
     <div
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
+      {/* قائمة الكاميرات */}
+      <div className="mt-4">
+        <label htmlFor="camera-select" className="mr-2">
+          اختر الكاميرا:
+        </label>
+        <select
+          id="camera-select"
+          onChange={(e) => setSelectedDeviceId(e.target.value)}
+          value={selectedDeviceId || ""}
+        >
+          {devices.map((device) => (
+            <option key={device.deviceId} value={device.deviceId}>
+              {device.label || `Camera ${device.deviceId}`}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* أزرار التحكم بالكاميرا */}
       <div className="mt-4">
         {!cameraActive ? (
           <button
@@ -132,8 +172,6 @@ const CameraCapture = () => {
         <video ref={videoRef} width="640" height="480" autoPlay />
         <canvas
           ref={canvasRef}
-          width="640"
-          height="480"
           style={{
             position: "absolute",
             top: 0,
@@ -186,4 +224,4 @@ const CameraCapture = () => {
   );
 };
 
-export default CameraCapture;
+export default SearchRealTime;

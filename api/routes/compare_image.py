@@ -381,13 +381,14 @@ async def search_image(captured_image:UploadFile = File(...)):
 async def detect_face(image: UploadFile = File(...)):
     try:
         # قراءة بيانات الصورة
+        # print('image', image)
         image_data = await image.read()
         search_image = np.frombuffer(image_data, np.uint8)
         search_image_array = cv2.imdecode(search_image, cv2.IMREAD_COLOR)
 
         if search_image_array is None:
             raise HTTPException(status_code=400, detail="Invalid image file.")
-
+        # print("search_image_array", search_image_array)
         # تهيئة الكلاسات (الكشف عن الهوية)
         embedding_storage = EmbeddingStorage()
         embedding_generator = EmbeddingGenerator()
