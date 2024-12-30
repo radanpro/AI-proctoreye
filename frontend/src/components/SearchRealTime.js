@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import axios from "axios";
 
 const SearchRealTime = () => {
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
   const [imageResults, setImageResults] = useState([]);
@@ -11,7 +9,9 @@ const SearchRealTime = () => {
   const [devices, setDevices] = useState([]); // قائمة الأجهزة
   const [selectedDeviceId, setSelectedDeviceId] = useState(null); // الكاميرا المختارة
 
-  // الحصول على قائمة الكاميرات المتاحة
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+
   useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then((deviceInfos) => {
       const videoDevices = deviceInfos.filter(
@@ -24,7 +24,6 @@ const SearchRealTime = () => {
     });
   }, []);
 
-  // بدء الكاميرا باستخدام الكاميرا المختارة
   const startCamera = () => {
     if (!cameraActive && selectedDeviceId) {
       navigator.mediaDevices
@@ -45,7 +44,6 @@ const SearchRealTime = () => {
     }
   };
 
-  // إيقاف الكاميرا
   const stopCamera = () => {
     if (cameraActive) {
       const stream = videoRef.current.srcObject;
@@ -56,7 +54,6 @@ const SearchRealTime = () => {
     }
   };
 
-  // دالة لالتقاط الصورة من الفيديو
   const captureImage = useCallback(() => {
     if (videoRef.current && canvasRef.current) {
       const videoWidth = videoRef.current.videoWidth;
@@ -85,7 +82,6 @@ const SearchRealTime = () => {
     }
   }, []);
 
-  // إرسال الصورة إلى الخادم
   const sendImageToServer = async (imageBlob) => {
     const formData = new FormData();
     formData.append("image", imageBlob, "image.jpg");
@@ -117,17 +113,35 @@ const SearchRealTime = () => {
 
   return (
     <div
-      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "20px",
+        border: "1px solid #ccc",
+        borderRadius: "10px",
+        boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+      }}
     >
       {/* قائمة الكاميرات */}
       <div className="mt-4">
-        <label htmlFor="camera-select" className="mr-2">
+        <label
+          htmlFor="camera-select"
+          className="mr-2"
+          style={{ fontSize: "18px" }}
+        >
           اختر الكاميرا:
         </label>
         <select
           id="camera-select"
           onChange={(e) => setSelectedDeviceId(e.target.value)}
           value={selectedDeviceId || ""}
+          style={{
+            padding: "10px",
+            fontSize: "16px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+          }}
         >
           {devices.map((device) => (
             <option key={device.deviceId} value={device.deviceId}>
@@ -143,6 +157,7 @@ const SearchRealTime = () => {
           <button
             onClick={startCamera}
             className="p-2 bg-green-500 text-white rounded"
+            style={{ padding: "10px", fontSize: "16px", borderRadius: "5px" }}
           >
             فتح الكاميرا
           </button>
@@ -150,6 +165,7 @@ const SearchRealTime = () => {
           <button
             onClick={stopCamera}
             className="p-2 bg-red-500 text-white rounded ml-4"
+            style={{ padding: "10px", fontSize: "16px", borderRadius: "5px" }}
           >
             إغلاق الكاميرا
           </button>
@@ -160,17 +176,23 @@ const SearchRealTime = () => {
         <button
           onClick={captureImage}
           className="p-2 bg-blue-500 text-white rounded"
+          style={{ padding: "10px", fontSize: "16px", borderRadius: "5px" }}
         >
           التقاط صورة
         </button>
       </div>
 
       <div
-        style={{ position: "relative" }}
-        className="border-4 border-sky-200 rounded-lg mt-6 m-2"
+        style={{
+          position: "relative",
+          padding: "20px",
+          border: "1px solid #ccc",
+          borderRadius: "10px",
+          boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+        }}
       >
         <video ref={videoRef} width="640" height="480" autoPlay />
-        <canvas
+        {/* <canvas
           ref={canvasRef}
           style={{
             position: "absolute",
@@ -179,16 +201,12 @@ const SearchRealTime = () => {
             pointerEvents: "none",
             zIndex: -1,
           }}
-        />
+        /> */}
 
         {flash && (
           <div
             style={{
               position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
               backgroundColor: "white",
               opacity: 0.5,
               zIndex: 10,
@@ -196,28 +214,38 @@ const SearchRealTime = () => {
           ></div>
         )}
 
-        {loading && <p>جاري التحميل...</p>}
+        {loading && <p style={{ fontSize: "18px" }}>جاري التحميل...</p>}
       </div>
 
       <div className="mt-4 flex">
         {imageResults.length > 0 ? (
           imageResults.map((result, index) => (
-            <div key={index}>
-              <h3>نتيجة {index + 1}</h3>
+            <div
+              key={index}
+              style={{
+                padding: "20px",
+                border: "1px solid #ccc",
+                borderRadius: "10px",
+                boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+              }}
+            >
+              <h3 style={{ fontSize: "20px" }}>نتيجة {index + 1}</h3>
               {result.imageUrl ? (
                 <img
+                  className="mt-4 block justify-center w-64 h-64"
                   src={result.imageUrl}
                   alt={`Result ${index + 1}`}
-                  width="200"
+                  width="100"
+                  style={{ borderRadius: "10px" }}
                 />
               ) : (
-                <p>لا توجد صورة.</p>
+                <p style={{ fontSize: "18px" }}>لا توجد صورة.</p>
               )}
-              <p>{JSON.stringify(result)}</p>
+              <p style={{ fontSize: "16px" }}>{JSON.stringify(result)}</p>
             </div>
           ))
         ) : (
-          <p>لا توجد نتائج بعد.</p>
+          <p style={{ fontSize: "18px" }}>لا توجد نتائج بعد.</p>
         )}
       </div>
     </div>

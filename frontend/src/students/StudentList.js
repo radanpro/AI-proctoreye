@@ -36,7 +36,7 @@ const StudentList = () => {
   }, []);
 
   return (
-    <div className=" w-full mx-auto h-screen p-6 bg-gray-50 rounded-lg shadow-md">
+    <div className=" w-full mx-auto h-full p-6 bg-gray-50 rounded-lg shadow-md">
       {successMessage && (
         <div className="bg-green-100 text-green-700 p-4 mb-4 rounded-md">
           {successMessage}
@@ -55,8 +55,7 @@ const StudentList = () => {
               alt={student.Number}
               className="w-16 h-16 rounded-full mr-4"
             />
-            <div>
-              {/* <p className="font-semibold">{student.StudentID}</p> */}
+            <div className="flex flex-1 gap-4 border-spacing-2 justify-between text-center items-center font-semibold ">
               <p>
                 <strong>Number:</strong> {student.Number}
               </p>
