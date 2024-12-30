@@ -5,6 +5,7 @@ import StudentList from "./students/StudentList";
 import CompareImage from "./components/CompareImage";
 import SearchImage from "./components/SearchImage";
 import SearchRealTime from "./components/SearchRealTime";
+import Layout from "./Layout";
 
 function Home() {
   return <h1>Welcome to Home Page</h1>;
@@ -13,61 +14,20 @@ function Home() {
 function App() {
   return (
     <Router future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
-      <div className="App">
-        <nav className="bg-gray-800 p-4">
-          <ul className="flex space-x-4">
-            <li>
-              <Link to="/" className="text-white hover:text-gray-400">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/add-student"
-                className="text-white hover:text-gray-400"
-              >
-                Add Student
-              </Link>
-            </li>
-            <li>
-              <Link to="/students" className="text-white hover:text-gray-400">
-                Student List
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/compare-image"
-                className="text-white hover:text-gray-400"
-              >
-                Compare Image
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/search-image"
-                className="text-white hover:text-gray-400"
-              >
-                Search Image
-              </Link>
-            </li>
-            <li>
-              <Link to="/camera" className="text-white hover:text-gray-400">
-                Real Time
-              </Link>
-            </li>
-          </ul>
-        </nav>
-        <div className="p-4">
+      <div className="App ">
+        <div className="p-4 rounded-sm shadow-lg">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/add-student" element={<AddStudent />} />
-            <Route path="/students" element={<StudentList />} />
-            <Route path="/compare-image" element={<CompareImage />} />
-            <Route
-              path="/camera"
-              element={<SearchRealTime setCapturedImage={() => {}} />}
-            />
-            <Route path="/search-image" element={<SearchImage />} />
+            <Route path="/" element={<Layout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/add-student" element={<AddStudent />} />
+              <Route path="/students" element={<StudentList />} />
+              <Route path="/compare-image" element={<CompareImage />} />
+              <Route
+                path="/camera"
+                element={<SearchRealTime setCapturedImage={() => {}} />}
+              />
+              <Route path="/search-image" element={<SearchImage />} />
+            </Route>
           </Routes>
         </div>
       </div>
