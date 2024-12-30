@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AddStudent from "./students/AddStudent";
 import StudentList from "./students/StudentList";
 import CompareImage from "./components/CompareImage";
