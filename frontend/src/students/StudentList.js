@@ -36,8 +36,7 @@ const StudentList = () => {
   }, []);
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      {/* عرض رسالة النجاح إذا كانت موجودة */}
+    <div className=" w-full mx-auto h-screen p-6 bg-gray-50 rounded-lg shadow-md">
       {successMessage && (
         <div className="bg-green-100 text-green-700 p-4 mb-4 rounded-md">
           {successMessage}
