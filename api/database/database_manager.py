@@ -6,6 +6,7 @@ from database.room_assignment import RoomAssignment
 from database.PostgreSQL.college import PostgerCollege
 from database.PostgreSQL.department import PostgerDepartment
 from database.PostgreSQL.student import PostgerStudent
+
 class DatabaseManager:
     _instance = None
 
@@ -21,7 +22,7 @@ class DatabaseManager:
         self.exam_db = Exam(db_name)
         self.room_assignment_db = RoomAssignment(db_name)
         # postgersql
-        self.use_postgresql = create_database_if_not_exists()
+        self.use_postgresql = self.create_database_if_not_exists()
         self.postger_college = PostgerCollege(postgername)
         self.postger_department = PostgerDepartment(postgername)
         self.postger_student = PostgerStudent(postgername)
@@ -61,9 +62,8 @@ class DatabaseManager:
             print("Database connection closed")
 
     def create_database_if_not_exists(self):
-    if self.use_postgresql:
         try:
-            connection = psycopg2.connect(dbname='postgres', user='root', password='', host='localhost', port='5432')
+            connection = psycopg2.connect(dbname='postgres', user='postgres', password='12345678', host='localhost', port='5432')
             connection.autocommit = True  # Enable autocommit for database creation
             cursor = connection.cursor()
             cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = '{self.db_name}'")
@@ -77,6 +77,7 @@ class DatabaseManager:
         except Exception as e:
             print(f"Error creating database: {e}")
             return True
+            
 # # Example usage
 # if __name__ == '__main__':
 #     db_manager = DatabaseManager()
