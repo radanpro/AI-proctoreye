@@ -1,4 +1,4 @@
-from services.student_data_handler import StudentDataHandler
+from services_v2.student_data_handler import StudentDataHandler
 from database.database_manager import DatabaseManager
 
 if __name__ == '__main__':

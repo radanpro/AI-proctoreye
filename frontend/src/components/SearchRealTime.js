@@ -282,19 +282,6 @@ const SearchRealTime = () => {
                   </ul>
                 </div>
               )}
-
-              {/* عرض البيانات المتبقية كـ JSON إذا لزم الأمر */}
-              {/* <pre
-                style={{
-                  backgroundColor: "#f8f8f8",
-                  padding: "10px",
-                  borderRadius: "5px",
-                  overflowX: "auto",
-                  fontSize: "14px",
-                }}
-              >
-                {JSON.stringify(result, null, 2)}
-              </pre> */}
             </div>
           ))
         ) : (

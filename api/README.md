@@ -1,6 +1,6 @@
 # شرح الكلاسات والوظائف في مجلد API
 
-## **1. FaceComparer (`services/face_comparer.py`)**
+## **1. FaceComparer (`services_v2/face_comparer.py`)**
 
 - **الوصف:**
   يقوم الكلاس بمقارنة متجهات الوجه لتحديد نسبة التشابه باستخدام خوارزميات رياضية.

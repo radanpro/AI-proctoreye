@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 from fastapi import APIRouter, Form, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
-from services.student_data_handler import StudentDataHandler
+from services_v2.student_data_handler import StudentDataHandler
 from database.database_manager import DatabaseManager
 from services_v2.embedding_generator import EmbeddingGenerator
 from services_v2.embedding_storage import EmbeddingStorage
