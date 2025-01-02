@@ -85,7 +85,7 @@ const SearchRealTime = () => {
   const sendImageToServer = async (imageBlob) => {
     const formData = new FormData();
     formData.append("image", imageBlob, "image.jpg");
-
+    setImageResults([]);
     setLoading(true);
     try {
       const response = await axios.post(
@@ -97,9 +97,12 @@ const SearchRealTime = () => {
           },
         }
       );
+      console.log(response);
+      console.log(response.data.status);
 
       if (response.data.status === "success") {
-        const faceData = response.data.faceData || {};
+        console.log("sdfadf");
+        const faceData = response.data || {};
         setImageResults((prevResults) => [...prevResults, faceData]);
       } else {
         console.error("Face detection failed:", response.data.message);
@@ -173,13 +176,15 @@ const SearchRealTime = () => {
       </div>
 
       <div className="mt-4">
-        <button
-          onClick={captureImage}
-          className="p-2 bg-blue-500 text-white rounded"
-          style={{ padding: "10px", fontSize: "16px", borderRadius: "5px" }}
-        >
-          التقاط صورة
-        </button>
+        {cameraActive && (
+          <button
+            onClick={captureImage}
+            className="p-2 bg-blue-500 text-white rounded"
+            style={{ padding: "10px", fontSize: "16px", borderRadius: "5px" }}
+          >
+            التقاط صورة
+          </button>
+        )}
       </div>
 
       <div
@@ -192,16 +197,17 @@ const SearchRealTime = () => {
         }}
       >
         <video ref={videoRef} width="640" height="480" autoPlay />
-        {/* <canvas
+        <canvas
           ref={canvasRef}
           style={{
             position: "absolute",
             top: 0,
             left: 0,
             pointerEvents: "none",
-            zIndex: -1,
+            zIndex: 1,
           }}
-        /> */}
+          className="w-40 h-40"
+        />
 
         {flash && (
           <div
@@ -217,7 +223,7 @@ const SearchRealTime = () => {
         {loading && <p style={{ fontSize: "18px" }}>جاري التحميل...</p>}
       </div>
 
-      <div className="mt-4 flex">
+      <div className="mt-4 flex w-full justify-center">
         {imageResults.length > 0 ? (
           imageResults.map((result, index) => (
             <div
@@ -227,21 +233,68 @@ const SearchRealTime = () => {
                 border: "1px solid #ccc",
                 borderRadius: "10px",
                 boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
+                marginBottom: "10px",
+                textAlign: "center",
               }}
             >
               <h3 style={{ fontSize: "20px" }}>نتيجة {index + 1}</h3>
-              {result.imageUrl ? (
+
+              {/* عرض الصورة إذا كانت موجودة */}
+              {result.image ? (
                 <img
-                  className="mt-4 block justify-center w-64 h-64"
-                  src={result.imageUrl}
+                  className="p-10 "
+                  src={result.image}
                   alt={`Result ${index + 1}`}
-                  width="100"
-                  style={{ borderRadius: "10px" }}
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    borderRadius: "10px",
+                    marginBottom: "10px",
+                  }}
                 />
               ) : (
-                <p style={{ fontSize: "18px" }}>لا توجد صورة.</p>
+                <p style={{ fontSize: "16px" }}>لا توجد صورة.</p>
               )}
-              <p style={{ fontSize: "16px" }}>{JSON.stringify(result)}</p>
+
+              {/* عرض اسم الشخص إذا كان موجودًا */}
+              {result.name && (
+                <p style={{ fontSize: "16px", margin: "5px 0" }}>
+                  <strong>الاسم:</strong> {result.name}
+                </p>
+              )}
+
+              {/* عرض النقاط إذا كانت موجودة */}
+              {result.points && result.points.length > 0 && (
+                <div style={{ fontSize: "16px", marginTop: "10px" }}>
+                  <strong>النقاط:</strong>
+                  <ul
+                    style={{
+                      padding: "0",
+                      listStyleType: "none",
+                      margin: "10px 0",
+                    }}
+                  >
+                    {result.points.map((point, i) => (
+                      <li key={i}>
+                        ({point.x}, {point.y})
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* عرض البيانات المتبقية كـ JSON إذا لزم الأمر */}
+              {/* <pre
+                style={{
+                  backgroundColor: "#f8f8f8",
+                  padding: "10px",
+                  borderRadius: "5px",
+                  overflowX: "auto",
+                  fontSize: "14px",
+                }}
+              >
+                {JSON.stringify(result, null, 2)}
+              </pre> */}
             </div>
           ))
         ) : (
